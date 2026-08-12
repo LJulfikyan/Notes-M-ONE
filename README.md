@@ -1,62 +1,122 @@
 # Notes M-ONE
 
-Flutter implementation of the M-One Notes challenge.
+Flutter implementation of the M-One Notes challenge: a local-first notes app
+with custom swipe actions, durable editor drafts, filters, search, reading, and
+the supplied empty states.
 
-> **Applying level:** TODO — fill this before submission.
+> **Applying level:** TODO — fill this in before submission.
 
 ## Run
+
+Prerequisite: a current stable Flutter SDK with an available iOS, Android,
+macOS, or Chrome target.
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-## State management
+Useful checks:
 
-MobX is used because the app has a small reactive state graph with clear derived views such as filters and search results. Persistence remains behind a repository boundary so UI state and storage concerns stay separate.
+```bash
+flutter analyze
+flutter test
+```
 
-## Persistence
+## Architecture and state management
 
-Notes and editor drafts are stored locally in SQLite.
+The dependency direction is deliberately small:
 
-## Design choice: frame 06
+```text
+Flutter UI -> MobX NotesStore -> NotesRepository -> SQLite
+```
 
-The implementation uses **06 — Filter View** rather than 05 — Favorites List. A filter model scales more cleanly and keeps `All`, `Favorites`, and `Recent` as explicit list modes.
+MobX owns the observable note collection, selected filter, search query, and
+derived list/search views. It fits this app because the reactive state is small
+and the filtering/search computations stay close to their source state. SQLite
+remains behind `NotesRepository`, so UI code never accesses storage directly.
 
-`Recent` is interpreted as all notes ordered by `updatedAt` descending because the design does not define a time window.
+## Persistence and drafts
 
-## Responsive checks
+Saved notes persist their title, body, color, favorite flag, and timestamps in
+SQLite. New notes cycle through the supplied six-color palette; the assigned
+color is stored on the note and is never inferred from list position.
 
-TODO after implementation: record the actual devices/emulators, viewport sizes and text scales checked.
+Editing uses a separate SQLite draft rather than mutating the saved note.
+Draft writes are debounced, serialized, and flushed when the app becomes
+inactive, paused, detached, or when the editor is disposed. Confirming Save
+promotes the content into the saved note and clears its draft. Discard clears
+the draft and preserves the saved note.
 
-Target checks:
-- narrow phone width
-- typical phone width
-- wider/tablet-like width
-- text scale 1.0
-- increased text scale
-- long titles and long bodies
+## Frame choice and implemented behavior
+
+The brief presents frames 05 and 06 as alternatives. This project implements
+**06 — Filter View**, not a separate 05 Favorites List. `All`, `Favorites`, and
+`Recent` are explicit filter modes. `Recent` means all notes sorted by
+`updatedAt` descending; the reference does not define a time window.
+
+Implemented states cover empty/populated home, custom left-delete and
+right-favorite swipes, filters, blank/no-result search, new/edit note drafts,
+save/discard confirmation, and reading. The editor toolbar is intentionally
+static because the challenge requires plain-string note content rather than
+rich text or markdown.
+
+## Responsive and verification checks
+
+The automated home widget matrix renders empty and populated states with long
+titles/bodies at 320×720, 390×720, and 768×720 logical pixels, using text
+scales 0.9, 1.0, and 1.5. It asserts that the framework reports no exceptions
+or overflow errors. Focused tests also cover filters, search, draft recovery,
+save/discard outcomes, persisted favorite/delete actions, and interrupted or
+disposed swipe animations.
+
+The app was additionally launched and visually checked on the iPhone 16 iOS
+simulator at its default text setting during the final visual audit.
 
 ## What is still wrong with this
 
-Required submission section. Do not remove it.
-
-TODO near submission: list real known issues in the implemented code. Do not invent issues and do not claim perfection.
+- A reader receives a snapshot of its note. If that note is edited from the
+  reader, returning to the reader can still show the pre-edit text until the
+  reader is reopened.
+- The editor flushes drafts at lifecycle boundaries, but no mobile app can
+  guarantee persistence for text entered immediately before an abrupt process
+  kill that prevents the write from reaching SQLite.
+- The source's exact font metadata and vector icon paths were not decoded from
+  the native Figma binary. The app uses responsive Flutter typography and
+  built-in icons that are visually close, rather than claiming exact matches.
+- A destructive swipe has no undo or confirmation because the reference does
+  not provide a recovery state.
 
 ## Design notes
 
-The source design intentionally contains gaps and contradictions. Current identified items are maintained in `docs/DESIGN_NOTES_DRAFT.md` and should be summarized here before submission.
+The supplied design intentionally contains gaps and contradictions. These are
+handled explicitly rather than silently redesigned:
 
-Key examples:
-- plain-text requirement conflicts with rich-text-looking styling/toolbar;
-- favorite icon treatment is inconsistent;
-- editor eye/star control changes meaning;
-- search exit/empty-query semantics are unspecified;
-- `"File not found"` is inconsistent terminology for a Notes app;
-- save/discard dialog triggers are underspecified;
-- note colors have no assignment/selection interaction;
-- fixed Figma placement lets the FAB overlap content unless the real list adds bottom padding.
+- Notes remain plain `title`/`body` strings. The rich-text-looking paragraph
+  styling and formatting toolbar therefore do not create formatting data.
+- The design alternates between outline stars, a filled yellow star, and an eye
+  in the editor. The implementation keeps the shown eye for non-favorites and
+  filled yellow star for favorites without adding undocumented controls.
+- The search X clears the query; system Back exits search. An empty query is
+  blank, as in frame 07. The no-results copy remains `"File not found. Try
+  searching again."` for visual fidelity even though it is file-browser
+  terminology.
+- Dirty Save opens the save/discard confirmation; dirty Back opens the
+  discard/keep confirmation; clean Back pops immediately.
+- The design provides no color picker, so new notes cycle through and persist
+  the supplied palette. The fixed-frame FAB overlaps content visually, while
+  the actual list includes bottom scroll padding so the final card remains
+  reachable.
+- Figma frame labels, the grey canvas, frame 14's blue selection outline, and
+  the shown system keyboard are reference chrome rather than app UI.
 
 ## AI context
 
-See `AI/context.md`.
+See [AI/context.md](AI/context.md) for the implementation brief, constraints,
+and guidance for future changes.
+
+## Manual submission task
+
+Record the required unedited approximately three-minute screen recording of
+yourself working on part of the project and talking through it. This repository
+does not create that recording automatically.

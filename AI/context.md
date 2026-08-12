@@ -52,6 +52,11 @@ Use MobX for observable application state and computed filtered/search views. Us
 
 Use built-in Flutter navigation unless a concrete implementation problem requires otherwise.
 
+`NotesApp` creates one `NotesStore` backed by `SqliteNotesRepository` and
+`NotesDatabase`; `HomePage` loads that store. Home/search cards push the reader,
+and the reader pushes the editor. Keep this wiring direct rather than adding a
+routing or dependency-injection layer.
+
 ## Data model
 
 Saved notes are plain text:
@@ -168,6 +173,10 @@ The custom swipe implementation is high-value code. It must:
 - not lose data or accidentally trigger both actions.
 
 Use the exact supplied illustrations rather than approximations.
+The current presentation uses compact rounded cards and controls, a small
+purple FAB, responsive illustration sizing, and a compact confirmation dialog
+with dark surface plus red/green actions. Treat these as implementation choices
+informed by the rendered overview, not extracted exact Figma measurements.
 
 ## Testing priority
 
@@ -186,6 +195,12 @@ The responsive home widget test should cover empty and populated states at
 narrow, normal-phone, and wide widths, with more than one text scale and long
 plain-text title/body input. Assert there are no captured framework exceptions
 or overflow errors rather than relying on a token pump.
+
+The current matrix uses 320×720, 390×720, and 768×720 logical viewports with
+text scales 0.9, 1.0, and 1.5. Preserve or update it whenever the home layout
+changes. Focused tests also exercise draft lifecycle flushing, confirmation
+outcomes, persisted favorite/delete actions, search/filter behavior, and swipe
+cancellation/disposal.
 
 Always run `flutter analyze` and the full test suite before concluding a task.
 
