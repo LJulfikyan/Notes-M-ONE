@@ -7,7 +7,7 @@ class NoSearchResultsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final imageSize = (constraints.maxWidth * 0.72).clamp(180.0, 280.0);
+        final imageSize = (constraints.maxWidth * 0.86).clamp(180.0, 340.0);
         return Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),

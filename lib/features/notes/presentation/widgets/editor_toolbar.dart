@@ -15,29 +15,23 @@ class EditorToolbar extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.format_bold, size: 18),
-          ),
-          SizedBox(width: 14),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.format_italic, size: 18),
-          ),
-          SizedBox(width: 14),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.format_underlined, size: 18),
-          ),
-          SizedBox(width: 14),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.link, size: 18)),
-          SizedBox(width: 14),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.format_list_bulleted, size: 18),
-          ),
+          _toolbarButton(Icons.format_bold),
+          _toolbarButton(Icons.format_italic),
+          _toolbarButton(Icons.format_underlined),
+          _toolbarButton(Icons.link),
+          _toolbarButton(Icons.format_list_bulleted),
         ],
       ),
+    );
+  }
+
+  Widget _toolbarButton(IconData icon) {
+    return IconButton(
+      onPressed: () {},
+      icon: Icon(icon, size: 18),
+      color: Colors.white70,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints.tightFor(width: 32, height: 40),
     );
   }
 }

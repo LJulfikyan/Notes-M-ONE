@@ -21,7 +21,7 @@ class NotesList extends StatelessWidget {
         return ListView.separated(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
           itemCount: notes.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 12),
+          separatorBuilder: (_, _) => const SizedBox(height: 8),
           itemBuilder: (context, index) {
             final note = notes[index];
             return SwipeNoteTile(

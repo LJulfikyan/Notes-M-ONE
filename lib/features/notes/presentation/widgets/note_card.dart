@@ -19,7 +19,7 @@ class NoteCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(5),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
           child: Text(
             note.title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
