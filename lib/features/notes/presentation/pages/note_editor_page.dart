@@ -8,6 +8,7 @@ import '../../domain/note_color.dart';
 import '../../domain/note_draft.dart';
 import '../stores/notes_store.dart';
 import '../widgets/editor_toolbar.dart';
+import 'note_reader_page.dart';
 
 class NoteEditorPage extends StatefulWidget {
   const NoteEditorPage({super.key, required this.store, this.note});
@@ -28,6 +29,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   NoteColor? _color;
   bool _initialized = false;
   bool _isSaved = false;
+  String _originalTitle = '';
+  String _originalBody = '';
 
   String get _draftId =>
       widget.note == null ? 'new-note' : 'note-${widget.note!.id}';
@@ -56,69 +59,75 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   @override
   Widget build(BuildContext context) {
     final favorite = widget.note?.isFavorite ?? false;
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          tooltip: 'Back',
-          icon: const Icon(Icons.chevron_left_rounded),
-          onPressed: _leave,
-        ),
-        actions: [
-          IconButton(
-            tooltip: 'Preview note',
-            icon: Icon(
-              favorite ? Icons.star_rounded : Icons.visibility_outlined,
+    return PopScope(
+      canPop: !_isDirty || _isSaved,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _handleBack();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: 'Back',
+            icon: const Icon(Icons.chevron_left_rounded),
+            onPressed: _handleBack,
+          ),
+          actions: [
+            IconButton(
+              tooltip: 'Preview note',
+              icon: Icon(
+                favorite ? Icons.star_rounded : Icons.visibility_outlined,
+              ),
+              color: favorite ? AppColors.favoriteAction : Colors.white,
+              onPressed: _preview,
             ),
-            color: favorite ? AppColors.favoriteAction : Colors.white,
-            onPressed: _preview,
-          ),
-          IconButton(
-            tooltip: 'Save note',
-            icon: const Icon(Icons.save_outlined),
-            onPressed: _save,
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _titleController,
-                      textCapitalization: TextCapitalization.sentences,
-                      style: Theme.of(context).textTheme.headlineSmall,
-                      decoration: const InputDecoration(
-                        hintText: 'Title',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: _bodyController,
-                        expands: true,
-                        maxLines: null,
-                        minLines: null,
-                        textAlignVertical: TextAlignVertical.top,
+            IconButton(
+              tooltip: 'Save note',
+              icon: const Icon(Icons.save_outlined),
+              onPressed: _save,
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+        body: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _titleController,
                         textCapitalization: TextCapitalization.sentences,
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.headlineSmall,
                         decoration: const InputDecoration(
-                          hintText: 'Type something...',
+                          hintText: 'Title',
                           border: InputBorder.none,
                         ),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: TextField(
+                          controller: _bodyController,
+                          expands: true,
+                          maxLines: null,
+                          minLines: null,
+                          textAlignVertical: TextAlignVertical.top,
+                          textCapitalization: TextCapitalization.sentences,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                          decoration: const InputDecoration(
+                            hintText: 'Type something...',
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const EditorToolbar(),
-          ],
+              const EditorToolbar(),
+            ],
+          ),
         ),
       ),
     );
@@ -139,6 +148,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     }
     _titleController.text = draft?.title ?? savedNote?.title ?? '';
     _bodyController.text = draft?.body ?? savedNote?.body ?? '';
+    _originalTitle = _titleController.text;
+    _originalBody = _bodyController.text;
     _color = color;
     setState(() => _initialized = true);
   }
@@ -149,6 +160,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     }
     _draftTimer?.cancel();
     _draftTimer = Timer(_draftDelay, _flushDraft);
+    setState(() {});
   }
 
   Future<void> _flushDraft() async {
@@ -169,7 +181,37 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     );
   }
 
+  bool get _isDirty =>
+      _titleController.text != _originalTitle ||
+      _bodyController.text != _originalBody;
+
   Future<void> _save() async {
+    if (_isDirty) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Save changes?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Discard'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true) {
+        if (confirmed == false) await _discard();
+        return;
+      }
+    }
+    await _commitSave();
+  }
+
+  Future<void> _commitSave() async {
     await _flushDraft();
     final savedNote = widget.note;
     if (savedNote == null) {
@@ -187,25 +229,52 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
       );
     }
     await widget.store.deleteDraft(_draftId);
-    _isSaved = true;
-    if (mounted) {
+    setState(() => _isSaved = true);
+    if (mounted && Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }
   }
 
-  Future<void> _leave() async {
-    await _flushDraft();
-    if (mounted) {
-      Navigator.of(context).pop();
+  Future<void> _handleBack() async {
+    if (!_isDirty) {
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+      return;
     }
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Are you sure you want to discard changes?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Discard'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Keep'),
+          ),
+        ],
+      ),
+    );
+    if (discard == true) await _discard();
   }
 
   void _preview() {
-    Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) =>
-            const Scaffold(body: Center(child: Text('Note reader'))),
-      ),
-    );
+    final note = widget.note;
+    if (note != null) {
+      Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) => NoteReaderPage(store: widget.store, note: note),
+        ),
+      );
+    }
+  }
+
+  Future<void> _discard() async {
+    setState(() => _isSaved = true);
+    await widget.store.deleteDraft(_draftId);
+    if (mounted && Navigator.of(context).canPop()) Navigator.of(context).pop();
   }
 }

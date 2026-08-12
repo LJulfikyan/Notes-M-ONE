@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../stores/notes_store.dart';
+import '../pages/note_reader_page.dart';
 import 'swipe_note_tile.dart';
 
 class NotesList extends StatelessWidget {
@@ -28,7 +29,11 @@ class NotesList extends StatelessWidget {
               note: note,
               onDelete: () => store.delete(note.id),
               onToggleFavorite: () => store.toggleFavorite(note),
-              onTap: () {},
+              onTap: () => Navigator.of(context).push<void>(
+                MaterialPageRoute(
+                  builder: (_) => NoteReaderPage(store: store, note: note),
+                ),
+              ),
             );
           },
         );

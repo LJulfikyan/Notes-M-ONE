@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../domain/note.dart';
 import '../stores/notes_store.dart';
 import '../widgets/no_search_results_view.dart';
 import '../widgets/note_card.dart';
 import '../widgets/search_field.dart';
+import 'note_reader_page.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key, required this.store});
@@ -64,7 +64,14 @@ class _SearchPageState extends State<SearchPage> {
                     separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) => NoteCard(
                       note: results[index],
-                      onTap: () => _openReaderPlaceholder(results[index]),
+                      onTap: () => Navigator.of(context).push<void>(
+                        MaterialPageRoute(
+                          builder: (_) => NoteReaderPage(
+                            store: widget.store,
+                            note: results[index],
+                          ),
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -79,16 +86,5 @@ class _SearchPageState extends State<SearchPage> {
   void _clearQuery() {
     _controller.clear();
     widget.store.setSearchQuery('');
-  }
-
-  void _openReaderPlaceholder(Note note) {
-    Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => Scaffold(
-          appBar: AppBar(title: Text(note.title)),
-          body: const Center(child: Text('Note reader')),
-        ),
-      ),
-    );
   }
 }
