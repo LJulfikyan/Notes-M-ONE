@@ -16,12 +16,12 @@ class NoteCard extends StatelessWidget {
       width: double.infinity,
       child: Material(
         color: _colorFor(note.color),
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(4),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(4),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Text(
               note.title,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(

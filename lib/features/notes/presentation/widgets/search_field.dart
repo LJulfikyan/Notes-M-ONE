@@ -26,30 +26,38 @@ class SearchField extends StatelessWidget {
       ).textTheme.bodyMedium?.copyWith(color: Colors.white),
       decoration: InputDecoration(
         isDense: true,
+        constraints: const BoxConstraints(minHeight: 34),
+        contentPadding: const EdgeInsets.symmetric(vertical: 7),
         hintText: 'Search by the keyword...',
         hintStyle: Theme.of(
           context,
         ).textTheme.bodySmall?.copyWith(color: Colors.white54),
-        prefixIcon: const Icon(Icons.search_rounded, size: 19),
+        prefixIcon: const Icon(Icons.search_rounded, size: 17),
+        prefixIconConstraints: const BoxConstraints(
+          minWidth: 34,
+          minHeight: 34,
+        ),
         suffixIcon: ContainedIconButton(
           tooltip: 'Clear search',
           onPressed: onClear,
           icon: Icons.close_rounded,
           backgroundColor: Colors.transparent,
+          size: 30,
+          iconSize: 17,
           borderRadius: const BorderRadius.all(Radius.circular(18)),
         ),
         filled: true,
         fillColor: AppColors.controlSurface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
         ),
       ),

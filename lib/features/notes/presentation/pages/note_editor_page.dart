@@ -109,7 +109,7 @@ class _NoteEditorPageState extends State<NoteEditorPage>
             children: [
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
                   child: Column(
                     children: [
                       TextField(
@@ -295,21 +295,21 @@ class _NoteEditorPageState extends State<NoteEditorPage>
   }) {
     return Dialog(
       backgroundColor: AppColors.darkSurface,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 32),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 28),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+        padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.info_outline_rounded, color: Colors.white54),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
               message,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
@@ -321,7 +321,7 @@ class _NoteEditorPageState extends State<NoteEditorPage>
                     result: discardResult,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
                   child: _dialogAction(
                     context: context,
@@ -353,8 +353,8 @@ class _NoteEditorPageState extends State<NoteEditorPage>
         style: TextButton.styleFrom(
           backgroundColor: color,
           foregroundColor: foregroundColor,
-          minimumSize: const Size(0, 32),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+          minimumSize: const Size(0, 28),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
           splashFactory: NoSplash.splashFactory,
           overlayColor: Colors.white12,
         ),

@@ -18,7 +18,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final foreground = find.byKey(const ValueKey('swipe-translation-1'));
-    expect(tester.getSize(foreground).width, 343);
+    expect(tester.getSize(foreground).width, 347);
     expect(_translation(tester, 1), 0);
     expect(find.byKey(const ValueKey('swipe-delete-action')), findsNothing);
     expect(find.byKey(const ValueKey('swipe-favorite-action')), findsNothing);
@@ -110,21 +110,21 @@ void main() {
   ) async {
     await _setPhoneSize(tester);
     final store = NotesStore(
-      SwipeTestRepository(List.generate(12, (index) => _note(index + 1))),
+      SwipeTestRepository(List.generate(20, (index) => _note(index + 1))),
     );
     await tester.pumpWidget(_home(store));
     await tester.pumpAndSettle();
 
     final gesture = await tester.startGesture(
-      tester.getCenter(find.byKey(const ValueKey('swipe-note-1'))),
+      tester.getCenter(find.byKey(const ValueKey('swipe-note-20'))),
     );
     await gesture.moveBy(const Offset(-80, 0));
     await gesture.cancel();
     await tester.pumpAndSettle();
-    expect(_translation(tester, 1), 0);
+    expect(_translation(tester, 20), 0);
 
     await tester.drag(
-      find.byKey(const ValueKey('swipe-note-1')),
+      find.byKey(const ValueKey('swipe-note-20')),
       const Offset(0, -300),
     );
     await tester.pumpAndSettle();

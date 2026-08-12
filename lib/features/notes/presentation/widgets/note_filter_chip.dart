@@ -16,7 +16,7 @@ class NoteFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(7);
+    final borderRadius = BorderRadius.circular(5);
     return Material(
       color: selected ? AppColors.favoriteAction : AppColors.controlSurface,
       borderRadius: borderRadius,
@@ -29,7 +29,7 @@ class NoteFilterChip extends StatelessWidget {
         hoverColor: Colors.transparent,
         focusColor: Colors.transparent,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(

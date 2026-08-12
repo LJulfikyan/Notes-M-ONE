@@ -36,7 +36,7 @@ class NoteReaderPage extends StatelessWidget {
       body: SafeArea(
         top: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
+          padding: const EdgeInsets.fromLTRB(14, 16, 14, 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -44,7 +44,7 @@ class NoteReaderPage extends StatelessWidget {
                 note.title,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               Text(note.body, style: Theme.of(context).textTheme.bodyLarge),
             ],
           ),
