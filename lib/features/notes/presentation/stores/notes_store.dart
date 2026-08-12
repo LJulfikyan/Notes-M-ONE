@@ -2,6 +2,8 @@ import 'package:mobx/mobx.dart';
 
 import '../../data/notes_repository.dart';
 import '../../domain/note.dart';
+import '../../domain/note_color.dart';
+import '../../domain/note_draft.dart';
 import '../../domain/note_filter.dart';
 
 part 'notes_store.g.dart';
@@ -75,8 +77,16 @@ abstract class NotesStoreBase with Store {
   }
 
   @action
-  Future<Note> create({required String title, required String body}) async {
-    final note = await _repository.createNote(title: title, body: body);
+  Future<Note> create({
+    required String title,
+    required String body,
+    NoteColor? color,
+  }) async {
+    final note = await _repository.createNote(
+      title: title,
+      body: body,
+      color: color,
+    );
     notes.add(note);
     return note;
   }
@@ -106,6 +116,14 @@ abstract class NotesStoreBase with Store {
 
   @action
   void setSearchQuery(String value) => searchQuery = value;
+
+  Future<NoteColor> reserveNextColor() => _repository.reserveNextColor();
+
+  Future<void> saveDraft(NoteDraft draft) => _repository.saveDraft(draft);
+
+  Future<NoteDraft?> getDraft(String id) => _repository.getDraft(id);
+
+  Future<void> deleteDraft(String id) => _repository.deleteDraft(id);
 
   void _replace(Note note) {
     final index = notes.indexWhere(

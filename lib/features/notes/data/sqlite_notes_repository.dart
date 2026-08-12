@@ -24,15 +24,19 @@ class SqliteNotesRepository implements NotesRepository {
   }
 
   @override
-  Future<Note> createNote({required String title, required String body}) async {
+  Future<Note> createNote({
+    required String title,
+    required String body,
+    NoteColor? color,
+  }) async {
     final database = await _notesDatabase.database;
     final now = _clock();
     return database.transaction((transaction) async {
-      final color = await _takeNextColor(transaction);
+      final assignedColor = color ?? await _takeNextColor(transaction);
       final id = await transaction.insert('notes', {
         'title': title,
         'body': body,
-        'color': color.storageValue,
+        'color': assignedColor.storageValue,
         'is_favorite': 0,
         'created_at': now.millisecondsSinceEpoch,
         'updated_at': now.millisecondsSinceEpoch,
@@ -41,12 +45,18 @@ class SqliteNotesRepository implements NotesRepository {
         id: id,
         title: title,
         body: body,
-        color: color,
+        color: assignedColor,
         isFavorite: false,
         createdAt: now,
         updatedAt: now,
       );
     });
+  }
+
+  @override
+  Future<NoteColor> reserveNextColor() async {
+    final database = await _notesDatabase.database;
+    return database.transaction(_takeNextColor);
   }
 
   @override

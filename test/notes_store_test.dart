@@ -106,13 +106,19 @@ class MemoryNotesRepository implements NotesRepository {
   int _nextColorIndex = 0;
 
   @override
-  Future<Note> createNote({required String title, required String body}) async {
+  Future<Note> createNote({
+    required String title,
+    required String body,
+    NoteColor? color,
+  }) async {
     final now = DateTime.now();
     final note = Note(
       id: _nextId++,
       title: title,
       body: body,
-      color: NoteColor.values[_nextColorIndex++ % NoteColor.values.length],
+      color:
+          color ??
+          NoteColor.values[_nextColorIndex++ % NoteColor.values.length],
       isFavorite: false,
       createdAt: now,
       updatedAt: now,
@@ -120,6 +126,10 @@ class MemoryNotesRepository implements NotesRepository {
     _notes.add(note);
     return note;
   }
+
+  @override
+  Future<NoteColor> reserveNextColor() async =>
+      NoteColor.values[_nextColorIndex++ % NoteColor.values.length];
 
   @override
   Future<void> deleteDraft(String id) async => _drafts.remove(id);

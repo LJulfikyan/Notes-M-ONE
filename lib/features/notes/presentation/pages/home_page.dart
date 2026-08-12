@@ -7,6 +7,7 @@ import '../widgets/empty_notes_view.dart';
 import '../widgets/header_button.dart';
 import '../widgets/note_filter_bar.dart';
 import '../widgets/notes_list.dart';
+import 'note_editor_page.dart';
 import 'search_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -87,7 +88,11 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.small(
-        onPressed: () {},
+        onPressed: () => Navigator.of(context).push<void>(
+          MaterialPageRoute(
+            builder: (_) => NoteEditorPage(store: widget.store),
+          ),
+        ),
         tooltip: 'Create note',
         backgroundColor: AppColors.notePurple,
         foregroundColor: Colors.white,

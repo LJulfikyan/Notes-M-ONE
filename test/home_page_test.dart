@@ -81,8 +81,11 @@ class _HomeRepository implements NotesRepository {
   final List<Note> _notes;
 
   @override
-  Future<Note> createNote({required String title, required String body}) =>
-      throw UnimplementedError();
+  Future<Note> createNote({
+    required String title,
+    required String body,
+    NoteColor? color,
+  }) => throw UnimplementedError();
 
   @override
   Future<void> deleteDraft(String id) => throw UnimplementedError();
@@ -95,6 +98,9 @@ class _HomeRepository implements NotesRepository {
 
   @override
   Future<List<Note>> getNotes() async => List.of(_notes);
+
+  @override
+  Future<NoteColor> reserveNextColor() => throw UnimplementedError();
 
   @override
   Future<void> saveDraft(NoteDraft draft) => throw UnimplementedError();

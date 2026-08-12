@@ -129,9 +129,13 @@ mixin _$NotesStore on NotesStoreBase, Store {
   );
 
   @override
-  Future<Note> create({required String title, required String body}) {
+  Future<Note> create({
+    required String title,
+    required String body,
+    NoteColor? color,
+  }) {
     return _$createAsyncAction.run(
-      () => super.create(title: title, body: body),
+      () => super.create(title: title, body: body, color: color),
     );
   }
 
