@@ -4,8 +4,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../stores/notes_store.dart';
 import '../widgets/empty_notes_view.dart';
-import '../widgets/note_card.dart';
+import '../widgets/header_button.dart';
 import '../widgets/note_filter_bar.dart';
+import '../widgets/notes_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.store});
@@ -35,13 +36,13 @@ class _HomePageState extends State<HomePage> {
           fontWeight: FontWeight.w500,
         ),
         actions: [
-          _HeaderButton(
+          HeaderButton(
             icon: Icons.search_rounded,
             label: 'Search notes',
             onPressed: () {},
           ),
           const SizedBox(width: 6),
-          _HeaderButton(
+          HeaderButton(
             icon: Icons.info_outline_rounded,
             label: 'Show filters',
             onPressed: () => setState(() => _filtersVisible = !_filtersVisible),
@@ -74,12 +75,7 @@ class _HomePageState extends State<HomePage> {
                         )
                       : const SizedBox.shrink(),
                 ),
-                Expanded(
-                  child: _NotesList(
-                    store: widget.store,
-                    isFilterVisible: _filtersVisible,
-                  ),
-                ),
+                Expanded(child: NotesList(store: widget.store)),
               ],
             );
           },
@@ -92,62 +88,6 @@ class _HomePageState extends State<HomePage> {
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
         child: const Icon(Icons.add_rounded),
-      ),
-    );
-  }
-}
-
-class _NotesList extends StatelessWidget {
-  const _NotesList({required this.store, required this.isFilterVisible});
-
-  final NotesStore store;
-  final bool isFilterVisible;
-
-  @override
-  Widget build(BuildContext context) {
-    return Observer(
-      builder: (context) {
-        final notes = store.filteredNotes;
-        if (notes.isEmpty) {
-          return const SizedBox.expand();
-        }
-        return ListView.separated(
-          key: ValueKey('notes-list-$isFilterVisible'),
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-          itemCount: notes.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 12),
-          itemBuilder: (context, index) =>
-              NoteCard(note: notes[index], onTap: () {}),
-        );
-      },
-    );
-  }
-}
-
-class _HeaderButton extends StatelessWidget {
-  const _HeaderButton({
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.controlSurface,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(8),
-        child: Semantics(
-          button: true,
-          label: label,
-          child: SizedBox(width: 30, height: 30, child: Icon(icon, size: 18)),
-        ),
       ),
     );
   }
