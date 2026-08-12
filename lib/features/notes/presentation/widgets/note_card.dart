@@ -16,17 +16,23 @@ class NoteCard extends StatelessWidget {
       width: double.infinity,
       child: Material(
         color: _colorFor(note.color),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(6),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(4),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Text(
-              note.title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF252525),
-                height: 1.25,
+          borderRadius: BorderRadius.circular(6),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 84),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 26),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  note.title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: const Color(0xFF252525),
+                    height: 2.05,
+                  ),
+                ),
               ),
             ),
           ),

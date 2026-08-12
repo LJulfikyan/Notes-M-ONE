@@ -5,6 +5,10 @@ import 'package:notes_m_one/features/notes/domain/note.dart';
 import 'package:notes_m_one/features/notes/domain/note_color.dart';
 import 'package:notes_m_one/features/notes/presentation/pages/home_page.dart';
 import 'package:notes_m_one/features/notes/presentation/stores/notes_store.dart';
+import 'package:notes_m_one/features/notes/presentation/widgets/contained_icon_button.dart';
+import 'package:notes_m_one/features/notes/presentation/widgets/header_button.dart';
+import 'package:notes_m_one/features/notes/presentation/widgets/note_card.dart';
+import 'package:notes_m_one/features/notes/presentation/widgets/note_filter_chip.dart';
 
 import 'support/swipe_test_repository.dart';
 
@@ -30,7 +34,7 @@ void main() {
       ),
     ];
 
-    for (final width in [320.0, 390.0, 768.0]) {
+    for (final width in [320.0, 393.0, 768.0]) {
       for (final textScale in [0.9, 1.0, 1.5]) {
         await tester.binding.setSurfaceSize(Size(width, 720));
 
@@ -46,6 +50,78 @@ void main() {
         expect(tester.takeException(), isNull);
       }
     }
+  });
+
+  testWidgets('reference viewport matches measured home geometry', (
+    tester,
+  ) async {
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.binding.setSurfaceSize(const Size(393, 852));
+
+    await tester.pumpWidget(_home([], 1));
+    await tester.pumpAndSettle();
+
+    final illustrationRect = tester.getRect(
+      find.byKey(const ValueKey('empty-notes-illustration')),
+    );
+    expect(illustrationRect.width, closeTo(320, 1));
+    expect(illustrationRect.height, closeTo(256, 1));
+    expect(illustrationRect.left, closeTo(37, 1));
+    expect(illustrationRect.top, closeTo(279, 1));
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpWidget(
+      _home([
+        _note(id: 1, title: 'Short', body: '', color: NoteColor.yellow),
+      ], 1),
+    );
+    await tester.pumpAndSettle();
+
+    final controls = find.descendant(
+      of: find.byType(HeaderButton),
+      matching: find.byType(ContainedIconButton),
+    );
+    expect(controls, findsNWidgets(2));
+    final searchRect = tester.getRect(controls.at(0));
+    final infoRect = tester.getRect(controls.at(1));
+    expect(searchRect.size, const Size.square(47));
+    expect(infoRect.size, const Size.square(47));
+    expect(infoRect.left - searchRect.right, 12);
+
+    final noteRect = tester.getRect(find.byType(NoteCard));
+    expect(noteRect.left, 23);
+    expect(noteRect.width, 348);
+    expect(noteRect.height, closeTo(84, 1.5));
+    expect(
+      tester.getSize(find.byType(FloatingActionButton)),
+      const Size.square(66),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('reference filter controls stay left aligned', (tester) async {
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.binding.setSurfaceSize(const Size(393, 852));
+    await tester.pumpWidget(
+      _home([_note(id: 1, title: 'Note', body: '', color: NoteColor.cyan)], 1),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.bySemanticsLabel('Show filters'));
+    await tester.pumpAndSettle();
+
+    final filters = find.byType(NoteFilterChip);
+    expect(filters, findsNWidgets(3));
+    final allRect = tester.getRect(filters.at(0));
+    final favoritesRect = tester.getRect(filters.at(1));
+    final recentRect = tester.getRect(filters.at(2));
+    expect(allRect.left, 23);
+    expect(allRect.size, const Size(50, 35));
+    expect(favoritesRect.left, 82);
+    expect(favoritesRect.size, const Size(94, 35));
+    expect(recentRect.left, 184);
+    expect(recentRect.size, const Size(78, 35));
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('filter choices remain usable with long content', (tester) async {

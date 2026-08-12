@@ -6,13 +6,15 @@ import 'swipe_note_tile.dart';
 
 class SwipeNoteTileState extends State<SwipeNoteTile>
     with SingleTickerProviderStateMixin {
-  static const _actionWidth = 88.0;
-  static const _revealThreshold = _actionWidth / 2;
+  static const _favoriteActionWidth = 85.0;
+  static const _favoriteRevealThreshold = _favoriteActionWidth / 2;
+  static const _deleteRevealFraction = 0.35;
   static const _revealVelocity = 700.0;
 
   late final AnimationController _controller;
   Animation<double>? _animation;
   double _offset = 0;
+  double _rowWidth = 1;
   bool _isActing = false;
 
   @override
@@ -37,40 +39,46 @@ class SwipeNoteTileState extends State<SwipeNoteTile>
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) => ClipRRect(
-        borderRadius: BorderRadius.circular(5),
-        child: SizedBox(
-          width: constraints.maxWidth,
-          child: Stack(
-            fit: StackFit.passthrough,
-            children: [
-              Positioned.fill(
-                child: SwipeActionBackground(
-                  offset: _offset,
-                  actionWidth: _actionWidth,
-                  onAction: _performRevealedAction,
-                ),
-              ),
-              Transform.translate(
-                key: ValueKey('swipe-translation-${widget.note.id}'),
-                offset: Offset(_offset, 0),
-                child: SizedBox(
-                  width: constraints.maxWidth,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: _onForegroundTap,
-                    onHorizontalDragStart: _onHorizontalDragStart,
-                    onHorizontalDragUpdate: _onHorizontalDragUpdate,
-                    onHorizontalDragEnd: _onHorizontalDragEnd,
-                    onHorizontalDragCancel: _onHorizontalDragCancel,
-                    child: NoteCard(note: widget.note, onTap: () {}),
+      builder: (context, constraints) {
+        _rowWidth = constraints.maxWidth;
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onHorizontalDragStart: _onHorizontalDragStart,
+          onHorizontalDragUpdate: _onHorizontalDragUpdate,
+          onHorizontalDragEnd: _onHorizontalDragEnd,
+          onHorizontalDragCancel: _onHorizontalDragCancel,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: SizedBox(
+              width: constraints.maxWidth,
+              child: Stack(
+                fit: StackFit.passthrough,
+                children: [
+                  Positioned.fill(
+                    child: SwipeActionBackground(
+                      offset: _offset,
+                      favoriteActionWidth: _favoriteActionWidth,
+                      onAction: _performRevealedAction,
+                    ),
                   ),
-                ),
+                  Transform.translate(
+                    key: ValueKey('swipe-translation-${widget.note.id}'),
+                    offset: Offset(_offset, 0),
+                    child: SizedBox(
+                      width: constraints.maxWidth,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: _onForegroundTap,
+                        child: NoteCard(note: widget.note, onTap: () {}),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -83,17 +91,26 @@ class SwipeNoteTileState extends State<SwipeNoteTile>
   void _onHorizontalDragUpdate(DragUpdateDetails details) {
     if (_isActing) return;
     setState(() {
-      _offset = (_offset + details.delta.dx).clamp(-_actionWidth, _actionWidth);
+      _offset = (_offset + details.delta.dx).clamp(
+        -_rowWidth,
+        _favoriteActionWidth,
+      );
     });
   }
 
   void _onHorizontalDragEnd(DragEndDetails details) {
     if (_isActing) return;
     final velocity = details.velocity.pixelsPerSecond.dx;
+    if (_offset > 0) {
+      final shouldReveal =
+          _offset >= _favoriteRevealThreshold || velocity >= _revealVelocity;
+      _settle(shouldReveal ? _favoriteActionWidth : 0);
+      return;
+    }
     final shouldReveal =
-        _offset.abs() >= _revealThreshold ||
-        (velocity.abs() >= _revealVelocity && velocity.sign == _offset.sign);
-    _settle(shouldReveal ? _offset.sign * _actionWidth : 0);
+        _offset.abs() >= _rowWidth * _deleteRevealFraction ||
+        velocity <= -_revealVelocity;
+    _settle(shouldReveal ? -_rowWidth : 0);
   }
 
   void _onHorizontalDragCancel() {

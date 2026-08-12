@@ -6,12 +6,12 @@ class SwipeActionBackground extends StatelessWidget {
   const SwipeActionBackground({
     super.key,
     required this.offset,
-    required this.actionWidth,
+    required this.favoriteActionWidth,
     required this.onAction,
   });
 
   final double offset;
-  final double actionWidth;
+  final double favoriteActionWidth;
   final Future<void> Function() onAction;
 
   @override
@@ -19,43 +19,37 @@ class SwipeActionBackground extends StatelessWidget {
     if (offset == 0) return const SizedBox.expand();
 
     final isFavorite = offset > 0;
-    final actionKey = ValueKey(
-      'swipe-${isFavorite ? 'favorite' : 'delete'}-action',
-    );
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Positioned(
-          left: isFavorite ? 0 : null,
-          right: isFavorite ? null : 0,
-          top: 0,
-          bottom: 0,
-          width: actionWidth,
-          child: Semantics(
-            button: true,
-            label: isFavorite ? 'Toggle favorite' : 'Delete note',
-            child: GestureDetector(
-              key: actionKey,
-              behavior: HitTestBehavior.opaque,
-              onTap: onAction,
-              child: ColoredBox(
-                color: isFavorite
-                    ? AppColors.favoriteAction
-                    : AppColors.deleteAction,
-                child: Center(
-                  child: Icon(
-                    isFavorite
-                        ? Icons.star_border_rounded
-                        : Icons.delete_outline,
-                    color: isFavorite ? AppColors.background : Colors.white,
-                    size: 28,
-                  ),
-                ),
-              ),
+    final action = Semantics(
+      button: true,
+      label: isFavorite ? 'Toggle favorite' : 'Delete note',
+      child: GestureDetector(
+        key: ValueKey('swipe-${isFavorite ? 'favorite' : 'delete'}-action'),
+        behavior: HitTestBehavior.opaque,
+        onTap: onAction,
+        child: ColoredBox(
+          key: ValueKey(
+            'swipe-${isFavorite ? 'favorite' : 'delete'}-background',
+          ),
+          color: isFavorite ? AppColors.favoriteAction : AppColors.deleteAction,
+          child: Center(
+            child: Icon(
+              isFavorite ? Icons.star_border_rounded : Icons.delete_outline,
+              color: isFavorite ? AppColors.background : Colors.white,
+              size: 28,
             ),
           ),
         ),
-      ],
+      ),
+    );
+
+    if (!isFavorite) return action;
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: SizedBox(
+        width: favoriteActionWidth,
+        height: double.infinity,
+        child: action,
+      ),
     );
   }
 }

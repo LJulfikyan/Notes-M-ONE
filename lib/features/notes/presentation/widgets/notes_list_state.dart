@@ -21,9 +21,9 @@ class NotesListState extends State<NotesList> {
         final notes = widget.store.filteredNotes;
         if (notes.isEmpty) return const SizedBox.expand();
         return ListView.separated(
-          padding: const EdgeInsets.fromLTRB(14, 8, 14, 80),
+          padding: const EdgeInsets.fromLTRB(23, 8, 22, 120),
           itemCount: notes.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 6),
+          separatorBuilder: (_, _) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
             final note = notes[index];
             return SwipeNoteTile(

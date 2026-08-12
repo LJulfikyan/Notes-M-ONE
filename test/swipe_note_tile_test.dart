@@ -12,14 +12,20 @@ void main() {
   testWidgets('a short note is closed and its foreground fills the row', (
     tester,
   ) async {
-    await _setPhoneSize(tester);
+    await _setReferenceSize(tester);
     final store = NotesStore(SwipeTestRepository([_note(1, title: 'Short')]));
     await tester.pumpWidget(_home(store));
     await tester.pumpAndSettle();
 
     final foreground = find.byKey(const ValueKey('swipe-translation-1'));
-    expect(tester.getSize(foreground).width, 347);
+    expect(tester.getSize(foreground).width, 348);
+    expect(tester.getSize(foreground).height, closeTo(84, 1.5));
     expect(_translation(tester, 1), 0);
+    expect(find.byKey(const ValueKey('swipe-delete-background')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('swipe-favorite-background')),
+      findsNothing,
+    );
     expect(find.byKey(const ValueKey('swipe-delete-action')), findsNothing);
     expect(find.byKey(const ValueKey('swipe-favorite-action')), findsNothing);
     expect(find.byIcon(Icons.delete_outline), findsNothing);
@@ -29,18 +35,24 @@ void main() {
   testWidgets('a left reveal does not delete until its action is tapped', (
     tester,
   ) async {
-    await _setPhoneSize(tester);
+    await _setReferenceSize(tester);
     final repository = SwipeTestRepository([_note(1)]);
     final store = NotesStore(repository);
     await tester.pumpWidget(_home(store));
     await tester.pumpAndSettle();
 
-    await _dragNote(tester, 1, const Offset(-120, 0));
+    await _dragNote(tester, 1, const Offset(-180, 0));
 
-    expect(_translation(tester, 1), -88);
+    expect(_translation(tester, 1), -348);
     expect(store.notes, hasLength(1));
     expect(await repository.getNotes(), hasLength(1));
     expect(find.byKey(const ValueKey('swipe-delete-action')), findsOneWidget);
+    expect(
+      tester
+          .getSize(find.byKey(const ValueKey('swipe-delete-background')))
+          .width,
+      348,
+    );
 
     await tester.tap(find.byKey(const ValueKey('swipe-delete-action')));
     await tester.pumpAndSettle();
@@ -52,15 +64,23 @@ void main() {
   testWidgets('a right reveal does not favorite until its action is tapped', (
     tester,
   ) async {
-    await _setPhoneSize(tester);
+    await _setReferenceSize(tester);
     final repository = SwipeTestRepository([_note(1)]);
     final store = NotesStore(repository);
     await tester.pumpWidget(_home(store));
     await tester.pumpAndSettle();
 
-    await _dragNote(tester, 1, const Offset(120, 0));
+    await _dragNote(tester, 1, const Offset(90, 0));
 
-    expect(_translation(tester, 1), 88);
+    final foreground = find.byKey(const ValueKey('swipe-translation-1'));
+    expect(_translation(tester, 1), 85);
+    expect(tester.getSize(foreground).width, 348);
+    expect(
+      tester
+          .getSize(find.byKey(const ValueKey('swipe-favorite-background')))
+          .width,
+      85,
+    );
     expect(store.notes.single.isFavorite, isFalse);
     expect((await repository.getNotes()).single.isFavorite, isFalse);
     expect(find.byKey(const ValueKey('swipe-favorite-action')), findsOneWidget);
@@ -76,7 +96,7 @@ void main() {
   testWidgets('a below-threshold drag settles closed without an action', (
     tester,
   ) async {
-    await _setPhoneSize(tester);
+    await _setReferenceSize(tester);
     final store = NotesStore(SwipeTestRepository([_note(1)]));
     await tester.pumpWidget(_home(store));
     await tester.pumpAndSettle();
@@ -92,23 +112,23 @@ void main() {
   testWidgets('opening one row closes the previously revealed row', (
     tester,
   ) async {
-    await _setPhoneSize(tester);
+    await _setReferenceSize(tester);
     final store = NotesStore(SwipeTestRepository([_note(1), _note(2)]));
     await tester.pumpWidget(_home(store));
     await tester.pumpAndSettle();
 
-    await _dragNote(tester, 1, const Offset(-120, 0));
-    expect(_translation(tester, 1), -88);
-    await _dragNote(tester, 2, const Offset(120, 0));
+    await _dragNote(tester, 1, const Offset(-180, 0));
+    expect(_translation(tester, 1), -348);
+    await _dragNote(tester, 2, const Offset(90, 0));
 
     expect(_translation(tester, 1), 0);
-    expect(_translation(tester, 2), 88);
+    expect(_translation(tester, 2), 85);
   });
 
   testWidgets('a canceled drag and vertical drag leave the list usable', (
     tester,
   ) async {
-    await _setPhoneSize(tester);
+    await _setReferenceSize(tester);
     final store = NotesStore(
       SwipeTestRepository(List.generate(20, (index) => _note(index + 1))),
     );
@@ -135,13 +155,17 @@ void main() {
   });
 }
 
-Future<void> _setPhoneSize(WidgetTester tester) async {
-  await tester.binding.setSurfaceSize(const Size(375, 800));
+Future<void> _setReferenceSize(WidgetTester tester) async {
+  await tester.binding.setSurfaceSize(const Size(393, 852));
   addTearDown(() => tester.binding.setSurfaceSize(null));
 }
 
 Future<void> _dragNote(WidgetTester tester, int id, Offset offset) async {
-  await tester.drag(find.byKey(ValueKey('swipe-note-$id')), offset);
+  await tester.timedDrag(
+    find.byKey(ValueKey('swipe-note-$id')),
+    offset,
+    const Duration(milliseconds: 400),
+  );
   await tester.pumpAndSettle();
 }
 

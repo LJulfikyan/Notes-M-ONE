@@ -16,10 +16,14 @@ class HeaderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ContainedIconButton(
-      icon: icon,
-      tooltip: label,
-      onPressed: onPressed,
+    return Center(
+      child: ContainedIconButton(
+        icon: icon,
+        tooltip: label,
+        onPressed: onPressed,
+        size: 47,
+        iconSize: 21,
+      ),
     );
   }
 }

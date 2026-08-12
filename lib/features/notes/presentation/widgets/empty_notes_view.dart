@@ -7,19 +7,30 @@ class EmptyNotesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final imageSize = (constraints.maxWidth * 0.78).clamp(180.0, 300.0);
-        return Center(
+        final imageWidth = (constraints.maxWidth * 320 / 393).clamp(
+          220.0,
+          320.0,
+        );
+        final imageHeight = imageWidth * 0.8;
+        final top = (constraints.maxHeight * 159 / 732).clamp(72.0, 159.0);
+        return SizedBox(
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.only(top: top, bottom: 24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(
-                  'assets/images/empty_notes.png',
-                  width: imageSize,
-                  height: imageSize,
+                SizedBox(
+                  key: const ValueKey('empty-notes-illustration'),
+                  width: imageWidth,
+                  height: imageHeight,
+                  child: Image.asset(
+                    'assets/images/empty_notes.png',
+                    fit: BoxFit.contain,
+                  ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Text(
                   'Create your first note !',
                   textAlign: TextAlign.center,
