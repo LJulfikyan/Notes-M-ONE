@@ -1,0 +1,18 @@
+{
+  "repo": "https://github.com/LJulfikyan/Notes-M-ONE",
+  "chosen_design_variant": "06 Filter View",
+  "state_management": "MobX",
+  "persistence": "SQLite",
+  "prompt_count": 10,
+  "verified_note_colors": [
+    "#FD99FF",
+    "#FF9E9E",
+    "#91F48F",
+    "#FFF599",
+    "#9EFFFF",
+    "#B69CFF"
+  ],
+  "app_background": "#252525",
+  "delete": "#FF0000",
+  "favorite_swipe": "#FFD700"
+}
