@@ -12,19 +12,22 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: _colorFor(note.color),
-      borderRadius: BorderRadius.circular(5),
-      child: InkWell(
-        onTap: onTap,
+    return SizedBox(
+      width: double.infinity,
+      child: Material(
+        color: _colorFor(note.color),
         borderRadius: BorderRadius.circular(5),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-          child: Text(
-            note.title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: const Color(0xFF252525),
-              height: 1.25,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(5),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+            child: Text(
+              note.title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: const Color(0xFF252525),
+                height: 1.25,
+              ),
             ),
           ),
         ),
