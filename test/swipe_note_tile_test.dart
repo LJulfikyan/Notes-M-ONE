@@ -35,6 +35,33 @@ void main() {
     );
   });
 
+  testWidgets('an interrupted horizontal drag settles without an action', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(375, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final store = NotesStore(SwipeTestRepository([_note(1)]));
+    await tester.pumpWidget(_home(store));
+    await tester.pump();
+
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('swipe-note-1'))),
+    );
+    await gesture.moveBy(const Offset(-180, 0));
+    await gesture.cancel();
+    await tester.pumpAndSettle();
+
+    expect(store.notes, hasLength(1));
+    expect(
+      tester
+          .widget<Transform>(find.byKey(const ValueKey('swipe-translation-1')))
+          .transform
+          .storage[12],
+      0,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('right swipe commits and persists the favorite toggle', (
     tester,
   ) async {
@@ -102,6 +129,28 @@ void main() {
 
     final scrollable = tester.state<ScrollableState>(find.byType(Scrollable));
     expect(scrollable.position.pixels, greaterThan(0));
+  });
+
+  testWidgets('disposing a tile during its commit animation is safe', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(375, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final repository = SwipeTestRepository([_note(1)]);
+    await tester.pumpWidget(_home(NotesStore(repository)));
+    await tester.pump();
+
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('swipe-note-1'))),
+    );
+    await gesture.moveBy(const Offset(-300, 0));
+    await gesture.up();
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+
+    expect(await repository.getNotes(), hasLength(1));
+    expect(tester.takeException(), isNull);
   });
 }
 

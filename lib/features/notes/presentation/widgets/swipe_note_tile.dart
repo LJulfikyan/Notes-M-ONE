@@ -132,7 +132,13 @@ class _SwipeNoteTileState extends State<SwipeNoteTile>
 
   Future<void> _commit(Future<void> Function() action, double target) async {
     _isCommitting = true;
-    await _animateTo(target);
+    if (!await _animateTo(target) || !mounted) {
+      if (mounted) {
+        _isCommitting = false;
+        _animateTo(0);
+      }
+      return;
+    }
     try {
       await action();
     } finally {
@@ -143,13 +149,18 @@ class _SwipeNoteTileState extends State<SwipeNoteTile>
     }
   }
 
-  Future<void> _animateTo(double target) async {
+  Future<bool> _animateTo(double target) async {
     _animation = Tween<double>(
       begin: _offset,
       end: target,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.value = 0;
-    await _controller.forward();
+    try {
+      await _controller.forward().orCancel;
+      return mounted;
+    } on TickerCanceled {
+      return false;
+    }
   }
 
   void _onAnimationTick() {

@@ -88,7 +88,12 @@ Discard:
 - clears the draft;
 - leaves the saved note unchanged.
 
-Avoid a complicated autosave architecture; a small debounced draft write is enough.
+Avoid a complicated autosave architecture; use a small debounced draft write.
+Draft writes must be serialized so an older asynchronous write cannot overwrite
+newer text. Flush the current dirty draft when the app becomes inactive, paused,
+or detached, and when the editor is disposed. Save and discard must wait for
+already-queued writes before clearing the draft, otherwise a late write can
+resurrect discarded content.
 
 ## Design sources
 
@@ -176,6 +181,11 @@ High-value tests:
 - draft survives store/repository recreation;
 - save/discard semantics;
 - custom swipe threshold and interrupted settle behavior where practical.
+
+The responsive home widget test should cover empty and populated states at
+narrow, normal-phone, and wide widths, with more than one text scale and long
+plain-text title/body input. Assert there are no captured framework exceptions
+or overflow errors rather than relying on a token pump.
 
 Always run `flutter analyze` and the full test suite before concluding a task.
 

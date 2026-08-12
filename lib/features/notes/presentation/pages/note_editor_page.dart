@@ -20,12 +20,15 @@ class NoteEditorPage extends StatefulWidget {
   State<NoteEditorPage> createState() => _NoteEditorPageState();
 }
 
-class _NoteEditorPageState extends State<NoteEditorPage> {
+class _NoteEditorPageState extends State<NoteEditorPage>
+    with WidgetsBindingObserver {
   static const _draftDelay = Duration(milliseconds: 350);
 
   late final TextEditingController _titleController;
   late final TextEditingController _bodyController;
   Timer? _draftTimer;
+  Future<void> _draftWrite = Future<void>.value();
+  int _draftRevision = 0;
   NoteColor? _color;
   bool _initialized = false;
   bool _isSaved = false;
@@ -42,18 +45,29 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     _bodyController = TextEditingController();
     _titleController.addListener(_scheduleDraft);
     _bodyController.addListener(_scheduleDraft);
+    WidgetsBinding.instance.addObserver(this);
     _restoreDraft();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _draftTimer?.cancel();
     if (!_isSaved) {
-      _flushDraft();
+      unawaited(_flushDraft());
     }
     _titleController.dispose();
     _bodyController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      unawaited(_flushDraft());
+    }
   }
 
   @override
@@ -69,7 +83,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
           leading: IconButton(
             tooltip: 'Back',
             icon: const Icon(Icons.chevron_left_rounded),
-            onPressed: _handleBack,
+            onPressed: _initialized ? _handleBack : null,
           ),
           actions: [
             IconButton(
@@ -78,12 +92,12 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                 favorite ? Icons.star_rounded : Icons.visibility_outlined,
               ),
               color: favorite ? AppColors.favoriteAction : Colors.white,
-              onPressed: _preview,
+              onPressed: _initialized ? _preview : null,
             ),
             IconButton(
               tooltip: 'Save note',
               icon: const Icon(Icons.save_outlined),
-              onPressed: _save,
+              onPressed: _initialized ? _save : null,
             ),
             const SizedBox(width: 8),
           ],
@@ -99,6 +113,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                     children: [
                       TextField(
                         controller: _titleController,
+                        enabled: _initialized,
                         textCapitalization: TextCapitalization.sentences,
                         style: Theme.of(context).textTheme.headlineSmall,
                         decoration: const InputDecoration(
@@ -109,6 +124,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                       Expanded(
                         child: TextField(
                           controller: _bodyController,
+                          enabled: _initialized,
                           expands: true,
                           maxLines: null,
                           minLines: null,
@@ -158,27 +174,47 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     if (!_initialized) {
       return;
     }
+    _draftRevision += 1;
     _draftTimer?.cancel();
-    _draftTimer = Timer(_draftDelay, _flushDraft);
+    if (_isDirty) {
+      _draftTimer = Timer(_draftDelay, _queueDraftWrite);
+    } else {
+      unawaited(_clearDraftAfterPendingWrites(_draftRevision));
+    }
     setState(() {});
   }
 
   Future<void> _flushDraft() async {
     _draftTimer?.cancel();
-    if (!_initialized || _color == null) {
+    _queueDraftWrite();
+    await _draftWrite;
+  }
+
+  void _queueDraftWrite() {
+    if (!_initialized || _color == null || !_isDirty) {
       return;
     }
-    await widget.store.saveDraft(
-      NoteDraft(
-        id: _draftId,
-        noteId: widget.note?.id,
-        title: _titleController.text,
-        body: _bodyController.text,
-        color: _color!,
-        isFavorite: widget.note?.isFavorite ?? false,
-        updatedAt: DateTime.now(),
-      ),
+    final draft = NoteDraft(
+      id: _draftId,
+      noteId: widget.note?.id,
+      title: _titleController.text,
+      body: _bodyController.text,
+      color: _color!,
+      isFavorite: widget.note?.isFavorite ?? false,
+      updatedAt: DateTime.now(),
     );
+    _draftWrite = _draftWrite
+        .catchError((_) {})
+        .then((_) => widget.store.saveDraft(draft));
+  }
+
+  Future<void> _clearDraftAfterPendingWrites(int revision) async {
+    _draftTimer?.cancel();
+    await _draftWrite.catchError((_) {});
+    if (_isDirty || revision != _draftRevision) {
+      return;
+    }
+    await widget.store.deleteDraft(_draftId);
   }
 
   bool get _isDirty =>
@@ -274,6 +310,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
 
   Future<void> _discard() async {
     setState(() => _isSaved = true);
+    _draftTimer?.cancel();
+    await _draftWrite.catchError((_) {});
     await widget.store.deleteDraft(_draftId);
     if (mounted && Navigator.of(context).canPop()) Navigator.of(context).pop();
   }

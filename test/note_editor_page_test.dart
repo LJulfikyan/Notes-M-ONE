@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:notes_m_one/core/theme/app_theme.dart';
 import 'package:notes_m_one/features/notes/domain/note.dart';
@@ -71,6 +72,22 @@ void main() {
     expect((await repository.getDraft('new-note'))?.color, NoteColor.magenta);
   });
 
+  testWidgets('lifecycle interruption flushes a dirty draft immediately', (
+    tester,
+  ) async {
+    final repository = SwipeTestRepository([]);
+    await tester.pumpWidget(_editor(NotesStore(repository), null));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).first, 'Protected draft');
+    await _sendLifecycleState(AppLifecycleState.paused);
+    await tester.pump();
+
+    expect((await repository.getDraft('new-note'))?.title, 'Protected draft');
+    expect(tester.takeException(), isNull);
+    await _sendLifecycleState(AppLifecycleState.resumed);
+  });
+
   testWidgets('formatting toolbar leaves plain text unchanged', (tester) async {
     final store = NotesStore(SwipeTestRepository([]));
 
@@ -105,4 +122,13 @@ Note _note() {
     createdAt: timestamp,
     updatedAt: timestamp,
   );
+}
+
+Future<void> _sendLifecycleState(AppLifecycleState state) {
+  return TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .handlePlatformMessage(
+        SystemChannels.lifecycle.name,
+        const StringCodec().encodeMessage('AppLifecycleState.${state.name}'),
+        null,
+      );
 }
