@@ -5,6 +5,7 @@ import 'app_colors.dart';
 abstract final class AppTheme {
   static final dark = ThemeData(
     brightness: Brightness.dark,
+    useMaterial3: false,
     scaffoldBackgroundColor: AppColors.background,
     colorScheme: const ColorScheme.dark(
       surface: AppColors.darkSurface,

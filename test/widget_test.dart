@@ -3,7 +3,7 @@ import 'package:notes_m_one/app.dart';
 
 void main() {
   testWidgets('renders the bootstrap home placeholder', (tester) async {
-    await tester.pumpWidget(const NotesApp());
+    await tester.pumpWidget(NotesApp());
 
     expect(find.text('Notes'), findsOneWidget);
   });
