@@ -7,6 +7,7 @@ import '../widgets/empty_notes_view.dart';
 import '../widgets/header_button.dart';
 import '../widgets/note_filter_bar.dart';
 import '../widgets/notes_list.dart';
+import 'search_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.store});
@@ -39,7 +40,11 @@ class _HomePageState extends State<HomePage> {
           HeaderButton(
             icon: Icons.search_rounded,
             label: 'Search notes',
-            onPressed: () {},
+            onPressed: () => Navigator.of(context).push<void>(
+              MaterialPageRoute(
+                builder: (_) => SearchPage(store: widget.store),
+              ),
+            ),
           ),
           const SizedBox(width: 6),
           HeaderButton(

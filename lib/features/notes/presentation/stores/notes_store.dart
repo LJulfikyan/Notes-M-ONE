@@ -50,7 +50,9 @@ abstract class NotesStoreBase with Store {
     if (query.isEmpty) {
       return const [];
     }
-    return filteredNotes
+    final result = List<Note>.of(notes)
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return result
         .where(
           (note) =>
               note.title.toLowerCase().contains(query) ||
