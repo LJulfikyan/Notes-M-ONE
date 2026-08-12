@@ -32,6 +32,10 @@ class EditorToolbar extends StatelessWidget {
       color: Colors.white70,
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints.tightFor(width: 32, height: 40),
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
     );
   }
 }

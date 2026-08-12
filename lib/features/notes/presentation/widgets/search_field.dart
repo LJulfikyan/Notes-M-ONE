@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import 'contained_icon_button.dart';
 
 class SearchField extends StatelessWidget {
   const SearchField({
@@ -30,10 +31,12 @@ class SearchField extends StatelessWidget {
           context,
         ).textTheme.bodySmall?.copyWith(color: Colors.white54),
         prefixIcon: const Icon(Icons.search_rounded, size: 19),
-        suffixIcon: IconButton(
+        suffixIcon: ContainedIconButton(
           tooltip: 'Clear search',
           onPressed: onClear,
-          icon: const Icon(Icons.close_rounded, size: 18),
+          icon: Icons.close_rounded,
+          backgroundColor: Colors.transparent,
+          borderRadius: const BorderRadius.all(Radius.circular(18)),
         ),
         filled: true,
         fillColor: AppColors.controlSurface,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import 'contained_icon_button.dart';
 
 class HeaderButton extends StatelessWidget {
   const HeaderButton({
@@ -16,18 +16,10 @@ class HeaderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.controlSurface,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(8),
-        child: Semantics(
-          button: true,
-          label: label,
-          child: SizedBox(width: 30, height: 30, child: Icon(icon, size: 18)),
-        ),
-      ),
+    return ContainedIconButton(
+      icon: icon,
+      tooltip: label,
+      onPressed: onPressed,
     );
   }
 }

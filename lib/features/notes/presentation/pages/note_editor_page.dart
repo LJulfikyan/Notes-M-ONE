@@ -7,6 +7,7 @@ import '../../domain/note.dart';
 import '../../domain/note_color.dart';
 import '../../domain/note_draft.dart';
 import '../stores/notes_store.dart';
+import '../widgets/contained_icon_button.dart';
 import '../widgets/editor_toolbar.dart';
 import 'note_reader_page.dart';
 
@@ -80,23 +81,23 @@ class _NoteEditorPageState extends State<NoteEditorPage>
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
+          leading: ContainedIconButton(
             tooltip: 'Back',
-            icon: const Icon(Icons.chevron_left_rounded),
+            icon: Icons.chevron_left_rounded,
             onPressed: _initialized ? _handleBack : null,
           ),
           actions: [
-            IconButton(
+            ContainedIconButton(
               tooltip: 'Preview note',
-              icon: Icon(
-                favorite ? Icons.star_rounded : Icons.visibility_outlined,
-              ),
-              color: favorite ? AppColors.favoriteAction : Colors.white,
+              icon: favorite ? Icons.star_rounded : Icons.visibility_outlined,
+              foregroundColor: favorite
+                  ? AppColors.favoriteAction
+                  : Colors.white,
               onPressed: _initialized ? _preview : null,
             ),
-            IconButton(
+            ContainedIconButton(
               tooltip: 'Save note',
-              icon: const Icon(Icons.save_outlined),
+              icon: Icons.save_outlined,
               onPressed: _initialized ? _save : null,
             ),
             const SizedBox(width: 8),
@@ -345,15 +346,20 @@ class _NoteEditorPageState extends State<NoteEditorPage>
     required Color foregroundColor,
     required bool result,
   }) {
-    return TextButton(
-      onPressed: () => Navigator.pop(context, result),
-      style: TextButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: foregroundColor,
-        minimumSize: const Size(0, 32),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(3),
+      child: TextButton(
+        onPressed: () => Navigator.pop(context, result),
+        style: TextButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: foregroundColor,
+          minimumSize: const Size(0, 32),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+          splashFactory: NoSplash.splashFactory,
+          overlayColor: Colors.white12,
+        ),
+        child: Text(label),
       ),
-      child: Text(label),
     );
   }
 

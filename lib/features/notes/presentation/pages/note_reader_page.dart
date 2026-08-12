@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../domain/note.dart';
 import '../stores/notes_store.dart';
+import '../widgets/contained_icon_button.dart';
 import 'note_editor_page.dart';
 
 class NoteReaderPage extends StatelessWidget {
@@ -14,15 +15,15 @@ class NoteReaderPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
+        leading: ContainedIconButton(
           tooltip: 'Back',
-          icon: const Icon(Icons.chevron_left_rounded),
+          icon: Icons.chevron_left_rounded,
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          IconButton(
+          ContainedIconButton(
             tooltip: 'Edit note',
-            icon: const Icon(Icons.edit_rounded),
+            icon: Icons.edit_rounded,
             onPressed: () => Navigator.of(context).push<void>(
               MaterialPageRoute(
                 builder: (_) => NoteEditorPage(store: store, note: note),
