@@ -36,6 +36,12 @@ Out of scope:
 
 ## Architecture contract
 
+### File organization rule
+
+Use one class per Dart file.
+
+Do not place multiple implementation classes in the same file. Each class should have its own snake_case file matching the class responsibility. Keep enums, extensions, and other reusable declarations separate rather than collecting unrelated declarations into large files.
+
 Keep the codebase small:
 
 `UI -> MobX NotesStore -> NotesRepository -> SQLite`

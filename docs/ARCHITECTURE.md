@@ -2,6 +2,23 @@
 
 Keep this smaller than a typical production app.
 
+
+## File organization
+
+The project follows a one-class-per-file rule.
+
+Examples:
+
+- `note.dart` -> `Note`
+- `note_draft.dart` -> `NoteDraft`
+- `notes_store.dart` -> `NotesStore`
+- `notes_repository.dart` -> `NotesRepository`
+- `sqlite_notes_repository.dart` -> `SqliteNotesRepository`
+- `home_page.dart` -> `HomePage`
+- `note_card.dart` -> `NoteCard`
+
+Do not place multiple implementation classes in one Dart file.
+
 ## Dependency direction
 
 ```text
