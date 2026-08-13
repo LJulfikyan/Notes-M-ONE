@@ -485,7 +485,7 @@ Tests are focused on actual behavior and responsive states rather than token pum
 
 ## Screen recording
 
-An unedited screen recording is included in the **project root** as part of the submission.
+An unedited [screen recording is available on Google Drive](https://drive.google.com/file/d/127_RcdLeqT0KXbXHu3hUPWuqiX1jz50P/view?usp=sharing). It is hosted externally because the recording is too large to include in the repository.
 
 The recording demonstrates:
 
