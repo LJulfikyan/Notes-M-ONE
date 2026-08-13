@@ -112,6 +112,14 @@ Local-only source material is in `.codex_reference/`:
 - `assets_sheet.jpg` — extracted image inventory.
 - device reference JPEGs — embedded source references, not app runtime assets.
 
+Reference priority for visual work:
+
+1. `.codex_reference/overview.png`
+2. extracted illustration assets
+3. `.codex_reference/figma_thumbnail.png`
+4. `docs/DESIGN_REFERENCE.md`
+5. native `.codex_reference/design.fig` only when a real parser is available
+
 Do **not** assume native `.fig` binary node properties are readable. If you cannot actually parse the Figma node tree, use the rendered references and documented extracted colors. Never fabricate exact measurements/fonts/vector paths.
 
 Known verified colors from the rendered Figma data:
@@ -180,8 +188,14 @@ The custom swipe implementation is high-value code. It must:
 - settle cleanly after interruption;
 - not lose data or accidentally trigger both actions.
 
+Swipe actions are reveal-then-tap interactions, never automatic actions.
+Favorite reveals about 85 logical pixels of yellow on the left while retaining
+and translating the full-width foreground. Delete moves the foreground fully
+left to expose a complete red row. No action layer may show at rest, and opening
+one row closes the previous row.
+
 Use the exact supplied illustrations rather than approximations.
-The current presentation uses compact rounded cards and controls, a small
+The current presentation uses compact rounded cards and controls, a 66-pixel
 purple FAB, responsive illustration sizing, and a compact confirmation dialog
 with dark surface plus red/green actions. Treat these as implementation choices
 informed by the rendered overview, not extracted exact Figma measurements.
@@ -204,13 +218,24 @@ narrow, normal-phone, and wide widths, with more than one text scale and long
 plain-text title/body input. Assert there are no captured framework exceptions
 or overflow errors rather than relying on a token pump.
 
-The current matrix uses 320×720, 390×720, and 768×720 logical viewports with
+The current matrix uses 320×720, 393×720, and 768×720 logical viewports with
 text scales 0.9, 1.0, and 1.5. Preserve or update it whenever the home layout
 changes. Focused tests also exercise draft lifecycle flushing, confirmation
 outcomes, persisted favorite/delete actions, search/filter behavior, and swipe
 cancellation/disposal.
 
-Always run `flutter analyze` and the full test suite before concluding a task.
+Before concluding an implementation task, run:
+
+```bash
+dart format .
+flutter analyze
+flutter test
+git diff --check
+```
+
+Do not introduce another state-management framework, direct UI-to-SQL access,
+rich text/markdown state, a UI/design-system package, `Dismissible`, backend
+features, sync, auth, tags, folders, or undocumented product scope.
 
 ## Modification discipline
 
