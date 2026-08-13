@@ -7,35 +7,80 @@ class EditorToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ColoredBox(
+      key: const ValueKey('editor-formatting-toolbar'),
       color: AppColors.background,
-      height: 56,
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _toolbarButton(Icons.format_bold),
-          _toolbarButton(Icons.format_italic),
-          _toolbarButton(Icons.format_underlined),
-          _toolbarButton(Icons.link),
-          _toolbarButton(Icons.format_list_bulleted),
-        ],
+      child: SizedBox(
+        height: 48,
+        width: double.infinity,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: [
+              _toolbarText('B', FontWeight.w700),
+              _toolbarText('I', FontWeight.w400, italic: true),
+              _toolbarText('U', FontWeight.w400, underline: true),
+              _toolbarButton(Icons.link_rounded),
+              _toolbarButton(Icons.format_align_left_rounded),
+              _toolbarButton(Icons.format_list_bulleted_rounded),
+              _toolbarButton(Icons.format_list_numbered_rounded),
+              _toolbarButton(Icons.code_rounded),
+              _toolbarButton(Icons.title_rounded),
+              _toolbarButton(Icons.functions_rounded),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _toolbarButton(IconData icon) {
-    return IconButton(
-      onPressed: () {},
-      icon: Icon(icon, size: 18),
-      color: Colors.white70,
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints.tightFor(width: 32, height: 40),
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {},
+        child: SizedBox(
+          width: 34,
+          height: 48,
+          child: Center(child: Icon(icon, size: 18, color: Colors.white70)),
+        ),
+      ),
+    );
+  }
+
+  Widget _toolbarText(
+    String label,
+    FontWeight fontWeight, {
+    bool italic = false,
+    bool underline = false,
+  }) {
+    return Semantics(
+      button: true,
+      label: label,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {},
+        child: SizedBox(
+          width: 34,
+          height: 48,
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
+                fontWeight: fontWeight,
+                fontStyle: italic ? FontStyle.italic : FontStyle.normal,
+                decoration: underline
+                    ? TextDecoration.underline
+                    : TextDecoration.none,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
