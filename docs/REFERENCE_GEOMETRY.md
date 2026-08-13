@@ -131,7 +131,7 @@ approximately 66
 
 Its position is near the bottom-right with a comfortable edge inset.
 
-Do not use the current approximately 39-wide visual FAB.
+The implementation uses a 66-pixel visual diameter.
 
 ## Filter view
 
@@ -183,7 +183,7 @@ approximately 341
 height:
 approximately 45
 
-The current field height is already close.
+The implementation uses the approximately 45-pixel field height.
 
 The field should not extend almost edge-to-edge.
 
@@ -203,8 +203,8 @@ approximately 320
 height:
 approximately 256
 
-At reference width the illustration should be substantially larger than the
-current implementation.
+At reference width the illustration occupies roughly 80% of the viewport
+width.
 
 The message sits shortly below the illustration.
 
@@ -227,7 +227,7 @@ approximately 313
 height:
 approximately 225
 
-The current implementation is much too vertically compressed.
+The implementation uses this measured dialog target.
 
 Reference action button size is approximately:
 

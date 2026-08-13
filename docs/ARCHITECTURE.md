@@ -1,11 +1,11 @@
-# Architecture Plan
+# Architecture
 
 Keep this smaller than a typical production app.
 
 
 ## File organization
 
-The project follows a one-class-per-file rule.
+The project follows one primary implementation concept per file.
 
 Examples:
 
@@ -17,7 +17,10 @@ Examples:
 - `home_page.dart` -> `HomePage`
 - `note_card.dart` -> `NoteCard`
 
-Do not place multiple implementation classes in one Dart file.
+A `StatefulWidget` and its private `State` class belong in the same Dart file.
+Small private implementation details used only by that widget may also remain
+colocated. Independent reusable widgets, stores, repositories, models, and
+services keep their own files.
 
 ## Dependency direction
 
@@ -105,13 +108,14 @@ Keep schema migrations simple but explicit.
 
 ## Draft model
 
-A draft needs enough information to restore editing without mutating the committed note:
-- draft key / note id if editing
+A draft restores editing without mutating the committed note. The persisted
+draft contains:
+- draft key and optional saved-note id
 - title
 - body
-- favorite/current presentation state if needed
-- color for new note
-- timestamp
+- favorite state
+- color
+- update timestamp
 
 A small debounce before writing drafts is acceptable; flush on important lifecycle/navigation boundaries where practical.
 
@@ -126,13 +130,16 @@ Expected routes/screens:
 - editor(existing)
 - reader(existing)
 
+Edit and Preview are presentation modes within the same editor route. Switching
+between them does not push Reader or another Editor route.
+
 Do not add a routing dependency solely for this challenge.
 
 ## UI assets
 
-Copy the 2000px extracted illustrations into a normal Flutter asset directory during bootstrap:
-- empty notes
-- no search results
+Runtime illustration assets are stored under `assets/images/`:
+- `empty_notes.svg`
+- `search_no_results.svg`
 
 The `.codex_reference/` directory remains local-only and ignored.
 

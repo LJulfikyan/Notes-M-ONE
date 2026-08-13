@@ -30,11 +30,11 @@ The dependency direction is deliberately small:
 Flutter UI -> MobX NotesStore -> NotesRepository -> SQLite
 ```
 
-MobX was chosen for the app's small reactive state graph and derived views such
-as filters and search results. SQLite remains isolated behind
-`NotesRepository`, so presentation code does not know about SQL. Built-in
-`Navigator` handles the small route set without a routing or dependency-
-injection framework.
+MobX was chosen because the app has a small observable state surface and a few
+derived views, notably filters and search results. SQLite remains isolated
+behind `NotesRepository`, so presentation code does not know about SQL.
+Built-in `Navigator` handles the small route set without a routing or
+dependency-injection framework.
 
 ## Persistence and drafts
 
@@ -42,11 +42,11 @@ SQLite stores each note's plain-string title/body, persisted color, favorite
 flag, and timestamps. New notes cycle through the supplied six-color palette;
 the assigned color is stored rather than inferred from list position.
 
-The editor persists drafts separately from saved notes. Draft writes are
-debounced, serialized, and flushed at lifecycle/disposal boundaries to protect
-unsaved input from process termination. Save commits the draft to the note,
-updates `updatedAt`, and clears the draft. Discard clears the draft without
-changing the previously saved note.
+The editor persists durable drafts separately from saved notes. Draft writes
+are debounced, serialized, and flushed at lifecycle/disposal boundaries to
+protect unsaved input across process termination. Save commits the current
+draft to the note, updates `updatedAt`, and clears the draft. Discard clears the
+draft without changing the previously saved note.
 
 ## Implemented frames and frame 06 choice
 
@@ -69,7 +69,7 @@ Save/Discard dialogs, and the read-only Reader.
 
 ## Responsive verification
 
-Manual verification:
+Manual verification performed:
 
 - Approximately 393×852 logical pixels on the iPhone simulator at the default
   text setting, including the final visual and Nunito typography checks.
@@ -84,39 +84,41 @@ Widget-test coverage:
 - Increased text-scale checks for Search, Editor, dialogs, Reader, and long
   wrapping/scrollable content.
 
-The 52-test suite also covers filter/search derivation, note CRUD and color
-persistence, durable draft recovery and lifecycle flushing, Save/Discard/Keep
-outcomes, reader refresh after editing, and custom swipe thresholds,
-cancellation, interruption, single-open-row behavior, and tap-only actions.
+The final 68-test suite also covers filter/search derivation, note CRUD and
+color persistence, durable draft recovery and lifecycle flushing,
+Save/Discard/Keep outcomes, reader refresh after editing, and custom swipe
+thresholds, cancellation, interruption, dynamic card/background sizing,
+single-open-row behavior, and tap-only actions.
 
 ## What is still wrong with this
 
-- Exact native Figma vector paths were not available for the icons, so the app
-  uses visually close built-in Flutter glyphs.
-- Nunito and the directly verified Home/card/Editor/empty-caption styles are
-  exact, but secondary text sizes and weights were visually matched because
-  those Figma layer values were not extracted.
-- The header's info-shaped control remains inert because the design defines no
-  Info destination. Frame 06 filters are directly visible on populated Home.
-- The Figma italicizes a sample Reader paragraph, but the challenge requires
-  plain strings; the app intentionally renders it as plain text.
-- Draft persistence is deliberately small and robust, but input entered within
-  the debounce window could still be lost if the operating system terminates
-  the process before Flutter receives a lifecycle callback or SQLite write.
-- `Recent` is an explicit `updatedAt`-descending interpretation because the
-  design gives no time-window semantics.
+- Some icon shapes use visually matched built-in Flutter glyphs because the
+  native Figma vector paths were not extracted.
+- The Info control remains inert because the design specifies no destination;
+  frame-06 filters are directly visible on populated Home.
+- The italic-looking Reader sample cannot be represented because the challenge
+  requires plain-string note content.
+- `Recent` is an inferred `updatedAt`-descending interpretation because the
+  design defines neither a time window nor ordering semantics.
+- Secondary typography not explicitly inspected in Figma was visually matched.
+- Draft writes are debounced; text entered immediately before an abrupt process
+  termination could be lost if Flutter receives no lifecycle callback and the
+  pending SQLite write has not run.
 
 ## Design notes
 
-- Notes remain plain `title` and `body` strings. No rich-text, markdown, or
-  formatting model was added; the formatting toolbar is decorative.
-- Favorite glyphs vary across the Figma. The app keeps outline stars for swipe
-  and list contexts and a yellow outlined editor state rather than inventing
-  additional favorite controls.
+- Notes remain plain `title` and `body` strings, so the italic-looking sample
+  content is intentionally not reproduced.
+- The rich-text-looking toolbar is rendered as a decorative 11-control row;
+  there is no formatting, rich-text, or markdown model.
+- Favorite glyph treatment varies across the Figma. The app uses outline stars
+  for cards and swipe context, plus the yellow outline editor state, without
+  adding another favorite interaction.
 - Frames 09/10 show an eye where frame 11 shows a star. The editor preserves
   that state-dependent shared control slot.
-- Search X clears the query; system Back exits Search. An empty query shows the
-  blank frame-07 state.
+- Search exit semantics are unspecified. The implementation makes X clear the
+  query and system Back exit Search; an empty query shows frame 07's blank
+  state.
 - `"File not found. Try searching again."` is preserved for fidelity despite
   its file-browser terminology.
 - Dirty Save opens Save/Discard; dirty Back opens Discard/Keep; clean Back exits
@@ -128,9 +130,12 @@ cancellation, interruption, single-open-row behavior, and tap-only actions.
   bottom scroll clearance so the final note remains reachable.
 - The design has six note colors but no picker or assignment rule, so new notes
   cycle through the palette and persist their assigned color.
-- `Recent` is defined as `updatedAt` descending.
+- `Recent` was undefined and is explicitly interpreted as `updatedAt`
+  descending.
 - Frame 14's blue border, frame labels, gray canvas, and shown keyboard are
   Figma/system chrome rather than application UI.
+- Frame 06 has no specified entry behavior, so filters are directly visible on
+  populated Home instead of overloading the Info control.
 
 ## AI context
 

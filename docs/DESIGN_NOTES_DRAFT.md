@@ -1,6 +1,7 @@
 # Design Notes Draft
 
-These are the design gaps/contradictions identified before implementation. Final README should report what was actually implemented, not blindly copy this file.
+These are the design gaps and final implementation decisions. The README keeps
+the submission-facing summary.
 
 ## 1. Plain text vs italic styling
 
@@ -12,13 +13,17 @@ The written brief requires title/body to remain plain strings with no formatting
 
 Frame 09 draws bold/italic/list/etc. controls even though rich text is forbidden.
 
-**Resolution:** render a static toolbar if needed for fidelity; no formatting actions and no formatting data model.
+**Resolution:** render the complete static toolbar for fidelity; it has no
+formatting actions or formatting data model.
 
 ## 3. Favorite icon inconsistency
 
-Favorite list/filter cards show outline stars, while frame 11 uses a filled yellow star for favorite editor state.
+Favorite list/filter cards, swipe actions, and the editor use inconsistent star
+treatment and color.
 
-**Resolution:** treat this as an inconsistent visual language. Prefer coherent active-state behavior where feasible and document any visual deviation.
+**Resolution:** use outline stars on favorite cards and in the swipe action,
+plus the yellow outline state in the editor header. Do not add another favorite
+interaction.
 
 ## 4. Eye control becomes a star
 
@@ -87,7 +92,9 @@ Frame 06 contains a `Recent` filter without a definition.
 
 A swipe-to-delete state is drawn, but no confirmation/undo design exists.
 
-**Resolution:** do not invent a large modal flow. Prefer deliberate thresholding and reliable gesture semantics. If an Undo snackbar is added, document it as a small shipped-app enhancement.
+**Resolution:** revealing the full red state does not delete. Require a
+deliberate tap on the revealed red/trash action; no unsupported confirmation or
+Undo flow is added.
 
 ## 14. Figma chrome can be mistaken for UI
 

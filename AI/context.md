@@ -43,7 +43,8 @@ Use **one primary implementation concept per file**.
 A `StatefulWidget` and its private `State` class belong in the same Dart file;
 the private State is part of the widget's implementation, not an independent
 concept. Keep independent reusable widgets, stores, repositories, models,
-services, enums, and extensions in their own snake_case files.
+services, and extensions in their own snake_case files. Small private enums or
+helpers used only by one widget may remain with that widget.
 
 Keep the codebase small:
 
@@ -141,16 +142,17 @@ Known verified colors from the rendered Figma data:
 ## Typography
 
 Nunito is bundled locally as the application-wide font; do not use
-platform-default fonts. The bundled variable font supplies the verified 300,
-400 and 600 weights. Exact known Figma styles are documented in
-`docs/REFERENCE_GEOMETRY.md`; retain existing sizes and weights for typography
-that has not been measured directly.
+platform-default fonts. The bundled variable font supplies the 300, 400, 600,
+and 700 weights used by the verified styles. Graphical `IconData` must continue
+to render through `Icon`, not through Nunito text. Exact known Figma styles are
+documented in `docs/REFERENCE_GEOMETRY.md`; retain existing sizes and weights
+for typography that has not been measured directly.
 
 ## Design traps
 
 1. Brief requires plain text, but Figma visually italicizes a paragraph.
 2. Formatting toolbar suggests rich text although rich text is explicitly forbidden.
-3. Favorite state uses outline stars in list/filter views but a filled yellow star in frame 11.
+3. Favorite star treatment and color vary between list, swipe, and editor frames.
 4. Editor frames 09/10 show an eye control where frame 11 shows a star.
 5. Search has no explicit close control; X is interpreted as clear query.
 6. Empty search-query behavior is unspecified; match frame 07 with blank results.
@@ -160,12 +162,15 @@ that has not been measured directly.
 10. FAB overlays list content in the fixed design; implementation must add bottom scroll space.
 11. Note colors are shown but no color-selection UI or assignment rule exists.
 12. Frame 14's blue outline is Figma selection chrome, not part of the app.
+13. Frame 06 has no specified entry action and is not connected to Info.
 
 These are not reasons to redesign the app. Make the smallest coherent implementation and document the assumption/deviation.
 
 ## Chosen interaction semantics
 
 - card tap -> reader
+- an open swipe foreground tap closes the row first; the next closed-row tap
+  may open the reader
 - FAB -> new editor
 - swipe left -> delete
 - swipe right -> favorite toggle
@@ -178,6 +183,9 @@ These are not reasons to redesign the app. Make the smallest coherent implementa
 - dirty editor Save -> save dialog
 - saved note stays unchanged until confirmed Save
 - favorite is principally toggled from the home swipe interaction
+- populated Home always shows All / Favorites / Recent; Info remains inert
+- Editor Edit and Preview are modes of the same route; Preview renders the
+  current unsaved draft, and Preview Back returns to Edit
 
 ## UI restrictions
 
@@ -193,15 +201,24 @@ The custom swipe implementation is high-value code. It must:
 
 Swipe actions are reveal-then-tap interactions, never automatic actions.
 Favorite reveals about 85 logical pixels of yellow on the left while retaining
-and translating the full-width foreground. Delete moves the foreground fully
-left to expose a complete red row. No action layer may show at rest, and opening
-one row closes the previous row.
+and translating the full-width foreground. At full favorite reveal, the
+foreground's left corners are square while its right corners remain rounded.
+Delete moves the foreground fully left to expose a complete red row. No action
+layer may show at rest, and opening one row closes the previous row.
 
-Use the exact supplied illustrations rather than approximations.
-The current presentation uses compact rounded cards and controls, a 66-pixel
-purple FAB, responsive illustration sizing, and a compact confirmation dialog
-with dark surface plus red/green actions. Treat these as implementation choices
-informed by the rendered overview, not extracted exact Figma measurements.
+Note cards retain the full list width, use `EdgeInsets.all(28)`, and derive
+their height from naturally wrapped Nunito text. Favorite cards include a
+noninteractive outline-star indicator with reserved text space. Swipe action
+backgrounds always match the card's dynamic height.
+
+Shared header/action controls are 50×50 with radius 15 and 24×24 graphical
+icons. Press feedback remains clipped to the visible rounded control.
+
+Use the supplied illustration assets rather than approximations. The final
+presentation uses a 66-pixel purple FAB, responsive illustration sizing, and a
+compact confirmation dialog with dark surface plus red/green actions. Treat
+values documented as approximate in `docs/REFERENCE_GEOMETRY.md` as rendered
+reference estimates rather than native Figma metadata.
 
 ## Testing priority
 
@@ -225,7 +242,8 @@ The current matrix uses 320×720, 393×720, and 768×720 logical viewports with
 text scales 0.9, 1.0, and 1.5. Preserve or update it whenever the home layout
 changes. Focused tests also exercise draft lifecycle flushing, confirmation
 outcomes, persisted favorite/delete actions, search/filter behavior, and swipe
-cancellation/disposal.
+cancellation/disposal. At submission finalization, `flutter test` reports 68
+passing tests.
 
 Before concluding an implementation task, run:
 

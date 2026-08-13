@@ -240,11 +240,30 @@ Verified Figma typography includes:
 * line-height: 100%
 * letter-spacing: 0
 
+### Filters
+
+Selected:
+
+* family: Nunito
+* weight: 700
+* size: 16
+* line-height: 100%
+* letter-spacing: 0
+
+Unselected:
+
+* family: Nunito
+* weight: 600
+* size: 16
+* line-height: 100%
+* letter-spacing: 0
+
 Required bundled weights include:
 
 * 300
 * 400
 * 600
+* 700
 
 Unknown secondary text styles may use Nunito while preserving their currently verified local size/weight unless exact Figma values have been established.
 
@@ -406,6 +425,9 @@ Keep:
 ## UI quality
 
 * Keep card text wrapping naturally.
+* Note cards use `EdgeInsets.all(28)` and content-driven height; do not restore
+  a fixed or arbitrary minimum card height.
+* Shared header/action controls are 50×50 with radius 15 and 24×24 icons.
 * Do not reduce verified Figma font sizes merely to avoid wrapping.
 * Avoid hard-coded screen heights.
 * Respect safe areas.
@@ -474,6 +496,7 @@ Do not silently "fix" these without documenting the decision:
 * explicit Save vs process-kill resilience requires separate draft persistence;
 * note colors exist but no color-selection interaction is specified;
 * Recent has no supplied definition;
+* frame 06 has no supplied entry behavior and must not be attached to Info;
 * frame 14 blue border is Figma selection chrome.
 
 ---
