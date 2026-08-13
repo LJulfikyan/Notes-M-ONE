@@ -405,9 +405,9 @@ void main() {
       find.byKey(const ValueKey('editor-save-control')),
     );
     expect(backRect.left, 23);
-    expect(backRect.size, const Size.square(47));
-    expect(stateRect.size, const Size.square(47));
-    expect(saveRect.size, const Size.square(47));
+    expect(backRect.size, const Size.square(50));
+    expect(stateRect.size, const Size.square(50));
+    expect(saveRect.size, const Size.square(50));
     expect(saveRect.left - stateRect.right, 19);
     expect(saveRect.right, 370);
     expect(

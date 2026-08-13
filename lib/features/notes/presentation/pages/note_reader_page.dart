@@ -34,7 +34,7 @@ class _NoteReaderPageState extends State<NoteReaderPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 23),
               child: SizedBox(
-                height: 47,
+                height: 50,
                 child: Row(
                   children: [
                     ContainedIconButton(
@@ -42,8 +42,6 @@ class _NoteReaderPageState extends State<NoteReaderPage> {
                       tooltip: 'Back',
                       icon: const Icon(Icons.chevron_left_rounded),
                       onPressed: () => Navigator.of(context).pop(),
-                      size: 47,
-                      iconSize: 25,
                     ),
                     const Spacer(),
                     ContainedIconButton(
@@ -51,8 +49,6 @@ class _NoteReaderPageState extends State<NoteReaderPage> {
                       tooltip: 'Edit note',
                       icon: const Icon(Icons.edit_rounded),
                       onPressed: _edit,
-                      size: 47,
-                      iconSize: 21,
                     ),
                   ],
                 ),

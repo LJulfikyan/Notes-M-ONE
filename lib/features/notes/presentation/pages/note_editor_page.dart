@@ -113,7 +113,7 @@ class _NoteEditorPageState extends State<NoteEditorPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 23),
       child: SizedBox(
-        height: 47,
+        height: 50,
         child: Row(
           children: [
             ContainedIconButton(
@@ -121,8 +121,6 @@ class _NoteEditorPageState extends State<NoteEditorPage>
               tooltip: 'Back',
               icon: const Icon(Icons.chevron_left_rounded),
               onPressed: _initialized ? _handleBack : null,
-              size: 47,
-              iconSize: 25,
             ),
             const Spacer(),
             if (isPreview)
@@ -131,8 +129,6 @@ class _NoteEditorPageState extends State<NoteEditorPage>
                 tooltip: 'Edit note',
                 icon: const Icon(Icons.edit_rounded),
                 onPressed: _showEdit,
-                size: 47,
-                iconSize: 21,
               )
             else ...[
               ContainedIconButton(
@@ -147,8 +143,6 @@ class _NoteEditorPageState extends State<NoteEditorPage>
                     ? AppColors.favoriteAction
                     : Colors.white,
                 onPressed: _initialized ? _preview : null,
-                size: 47,
-                iconSize: 21,
               ),
               const SizedBox(width: 19),
               ContainedIconButton(
@@ -156,8 +150,6 @@ class _NoteEditorPageState extends State<NoteEditorPage>
                 tooltip: 'Save note',
                 icon: const Icon(Icons.save_outlined),
                 onPressed: _initialized ? _save : null,
-                size: 47,
-                iconSize: 21,
               ),
             ],
           ],

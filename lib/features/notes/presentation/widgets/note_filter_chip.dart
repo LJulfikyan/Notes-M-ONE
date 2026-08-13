@@ -36,9 +36,12 @@ class NoteFilterChip extends StatelessWidget {
           child: Center(
             child: Text(
               label,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              style: TextStyle(
                 color: selected ? AppColors.background : Colors.white70,
-                fontWeight: FontWeight.w600,
+                fontFamily: 'Nunito',
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                fontSize: 16,
+                height: 1,
                 letterSpacing: 0,
               ),
             ),

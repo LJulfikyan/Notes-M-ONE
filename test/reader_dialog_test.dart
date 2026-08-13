@@ -139,9 +139,9 @@ void main() {
     );
     expect(backRect.left, 23);
     expect(backRect.top, 24);
-    expect(backRect.size, const Size.square(47));
+    expect(backRect.size, const Size.square(50));
     expect(editRect.right, 370);
-    expect(editRect.size, const Size.square(47));
+    expect(editRect.size, const Size.square(50));
     expect(tester.takeException(), isNull);
   });
 

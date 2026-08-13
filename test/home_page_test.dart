@@ -100,9 +100,17 @@ void main() {
     expect(controls, findsNWidgets(2));
     final searchRect = tester.getRect(controls.at(0));
     final infoRect = tester.getRect(controls.at(1));
-    expect(searchRect.size, const Size.square(47));
-    expect(infoRect.size, const Size.square(47));
+    expect(searchRect.size, const Size.square(50));
+    expect(infoRect.size, const Size.square(50));
     expect(infoRect.left - searchRect.right, 19);
+    final searchControl = tester.widget<ContainedIconButton>(controls.at(0));
+    expect(searchControl.size, 50);
+    expect(searchControl.iconSize, 24);
+    expect(searchControl.borderRadius, BorderRadius.circular(15));
+    expect(
+      tester.getSize(find.byIcon(Icons.search_rounded)),
+      const Size.square(24),
+    );
 
     final appBar = tester.widget<AppBar>(find.byType(AppBar));
     expect(appBar.titleTextStyle?.fontFamily, 'Nunito');
@@ -178,6 +186,18 @@ void main() {
     expect(favoritesRect.size, const Size(94, 35));
     expect(recentRect.left, 184);
     expect(recentRect.size, const Size(78, 35));
+    final selectedStyle = tester.widget<Text>(find.text('All')).style!;
+    expect(selectedStyle.fontFamily, 'Nunito');
+    expect(selectedStyle.fontWeight, FontWeight.w700);
+    expect(selectedStyle.fontSize, 16);
+    expect(selectedStyle.height, 1);
+    expect(selectedStyle.letterSpacing, 0);
+    final unselectedStyle = tester.widget<Text>(find.text('Favorites')).style!;
+    expect(unselectedStyle.fontFamily, 'Nunito');
+    expect(unselectedStyle.fontWeight, FontWeight.w600);
+    expect(unselectedStyle.fontSize, 16);
+    expect(unselectedStyle.height, 1);
+    expect(unselectedStyle.letterSpacing, 0);
 
     await tester.tap(find.bySemanticsLabel('Info'));
     await tester.pumpAndSettle();

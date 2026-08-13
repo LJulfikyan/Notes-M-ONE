@@ -21,8 +21,6 @@ class HeaderButton extends StatelessWidget {
         icon: icon,
         tooltip: label,
         onPressed: onPressed,
-        size: 47,
-        iconSize: 21,
       ),
     );
   }

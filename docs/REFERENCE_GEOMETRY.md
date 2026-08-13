@@ -21,6 +21,8 @@ must not be substituted.
 |---|---:|---:|---:|---:|
 | Home `Notes` heading | 600 | 43 | 100% | 0% |
 | Note/card text | 400 | 25 | 100% | 0% |
+| Selected filter | 700 | 16 | 100% | 0% |
+| Unselected filter | 600 | 16 | 100% | 0% |
 | Editor title and title placeholder | 400 | 48 | 100% | 0% |
 | Editor body and body placeholder | 400 | 23 | 100% | 0% |
 | Empty-state caption | 300 | 20 | 100% | 0% |
@@ -41,11 +43,14 @@ value.
 
 ## Header controls
 
-Search/info/back/eye/save style square control:
-approximately 47 × 47
+Search/info/back/eye/save/favorite/edit shared control:
+exactly 50 × 50
 
-Gap between adjacent header controls:
-approximately 12
+Corner radius:
+15
+
+Graphical icon:
+24 × 24
 
 These controls must be visually square.
 
@@ -131,6 +136,18 @@ Do not use the current approximately 39-wide visual FAB.
 ## Filter view
 
 Filters are LEFT ALIGNED, not centered.
+
+Selected filter typography:
+- Nunito 700
+- size 16
+- line height 1.0
+- letter spacing 0
+
+Unselected filter typography:
+- Nunito 600
+- size 16
+- line height 1.0
+- letter spacing 0
 
 Approximate reference:
 

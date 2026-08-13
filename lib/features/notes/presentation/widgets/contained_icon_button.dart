@@ -10,9 +10,9 @@ class ContainedIconButton extends StatelessWidget {
     required this.onPressed,
     this.backgroundColor = AppColors.controlSurface,
     this.foregroundColor = Colors.white,
-    this.size = 30,
-    this.iconSize = 18,
-    this.borderRadius = const BorderRadius.all(Radius.circular(8)),
+    this.size = 50,
+    this.iconSize = 24,
+    this.borderRadius = const BorderRadius.all(Radius.circular(15)),
   });
 
   final Icon icon;
