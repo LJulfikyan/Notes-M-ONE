@@ -120,7 +120,9 @@ void main() {
     await tester.tap(find.text('Project planning'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(NoteReaderPage), findsOneWidget);
+    final reader = tester.widget<NoteReaderPage>(find.byType(NoteReaderPage));
+    expect(reader.note.id, 2);
+    expect(reader.note.title, 'Project planning');
     expect(find.text('Outline the next milestone.'), findsOneWidget);
   });
 

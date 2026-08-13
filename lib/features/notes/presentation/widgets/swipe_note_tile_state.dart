@@ -66,10 +66,9 @@ class SwipeNoteTileState extends State<SwipeNoteTile>
                     offset: Offset(_offset, 0),
                     child: SizedBox(
                       width: constraints.maxWidth,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
+                      child: NoteCard(
+                        note: widget.note,
                         onTap: _onForegroundTap,
-                        child: NoteCard(note: widget.note, onTap: () {}),
                       ),
                     ),
                   ),
