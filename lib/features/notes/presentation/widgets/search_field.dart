@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import 'contained_icon_button.dart';
 
 class SearchField extends StatelessWidget {
   const SearchField({
@@ -17,48 +16,70 @@ class SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      autofocus: true,
-      onChanged: onChanged,
-      style: Theme.of(
-        context,
-      ).textTheme.bodyMedium?.copyWith(color: Colors.white),
-      decoration: InputDecoration(
-        isDense: true,
-        constraints: const BoxConstraints(minHeight: 34),
-        contentPadding: const EdgeInsets.symmetric(vertical: 7),
-        hintText: 'Search by the keyword...',
-        hintStyle: Theme.of(
-          context,
-        ).textTheme.bodySmall?.copyWith(color: Colors.white54),
-        prefixIcon: const Icon(Icons.search_rounded, size: 17),
-        prefixIconConstraints: const BoxConstraints(
-          minWidth: 34,
-          minHeight: 34,
-        ),
-        suffixIcon: ContainedIconButton(
-          tooltip: 'Clear search',
-          onPressed: onClear,
-          icon: Icons.close_rounded,
-          backgroundColor: Colors.transparent,
-          size: 30,
-          iconSize: 17,
-          borderRadius: const BorderRadius.all(Radius.circular(18)),
-        ),
-        filled: true,
-        fillColor: AppColors.controlSurface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
+    const borderRadius = BorderRadius.all(Radius.circular(23));
+    return SizedBox(
+      key: const ValueKey('search-field-surface'),
+      height: 45,
+      child: Material(
+        color: AppColors.controlSurface,
+        borderRadius: borderRadius,
+        clipBehavior: Clip.antiAlias,
+        child: Row(
+          children: [
+            const SizedBox(width: 14),
+            const Icon(Icons.search_rounded, size: 18, color: Colors.white54),
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextField(
+                controller: controller,
+                autofocus: true,
+                onChanged: onChanged,
+                textAlignVertical: TextAlignVertical.center,
+                textInputAction: TextInputAction.search,
+                cursorColor: Colors.white70,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  height: 1.2,
+                  letterSpacing: 0,
+                ),
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Search by the keyword...',
+                  hintStyle: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 14,
+                    height: 1.2,
+                    letterSpacing: 0,
+                  ),
+                ),
+              ),
+            ),
+            Tooltip(
+              message: 'Clear search',
+              child: Semantics(
+                button: true,
+                label: 'Clear search',
+                child: SizedBox(
+                  width: 42,
+                  height: 45,
+                  child: InkWell(
+                    onTap: onClear,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.white10,
+                    hoverColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    child: const Center(
+                      child: Icon(
+                        Icons.close_rounded,
+                        size: 18,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
