@@ -3,13 +3,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:notes_m_one/core/theme/app_theme.dart';
 import 'package:notes_m_one/features/notes/domain/note.dart';
 import 'package:notes_m_one/features/notes/domain/note_color.dart';
+import 'package:notes_m_one/features/notes/domain/note_filter.dart';
 import 'package:notes_m_one/features/notes/presentation/pages/home_page.dart';
+import 'package:notes_m_one/features/notes/presentation/pages/search_page.dart';
 import 'package:notes_m_one/features/notes/presentation/stores/notes_store.dart';
 import 'package:notes_m_one/features/notes/presentation/widgets/contained_icon_button.dart';
 import 'package:notes_m_one/features/notes/presentation/widgets/header_button.dart';
 import 'package:notes_m_one/features/notes/presentation/widgets/note_card.dart';
 import 'package:notes_m_one/features/notes/presentation/widgets/note_filter_chip.dart';
+import 'package:notes_m_one/features/notes/presentation/widgets/notes_info_dialog.dart';
 
+import 'support/counting_navigator_observer.dart';
 import 'support/swipe_test_repository.dart';
 
 void main() {
@@ -241,10 +245,83 @@ void main() {
     expect(unselectedStyle.height, 1);
     expect(unselectedStyle.letterSpacing, 0);
 
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Info opens instructions without changing filter or page', (
+    tester,
+  ) async {
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.binding.setSurfaceSize(const Size(393, 852));
+    final note = _note(
+      id: 1,
+      title: 'Favorite note',
+      body: '',
+      color: NoteColor.green,
+      isFavorite: true,
+    );
+    final store = NotesStore(SwipeTestRepository([note]));
+    final observer = CountingNavigatorObserver();
+    await tester.pumpWidget(_homeWithStore(store, observers: [observer]));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Favorites'));
+    await tester.pumpAndSettle();
+    expect(store.filter, NoteFilter.favorites);
+    expect(observer.pagePushCount, 1);
+
     await tester.tap(find.bySemanticsLabel('Info'));
     await tester.pumpAndSettle();
-    expect(find.byType(NoteFilterChip), findsNWidgets(3));
-    expect(tester.getRect(filters.at(0)), allRect);
+
+    expect(find.byType(NotesInfoDialog), findsOneWidget);
+    expect(find.byKey(const ValueKey('notes-info-title')), findsOneWidget);
+    expect(
+      find.textContaining('Notes are stored locally on this device.'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Swipe right to reveal Favorite.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Swipe left to reveal Delete.'), findsOneWidget);
+    expect(
+      find.textContaining('Use All, Favorites, and Recent to filter notes.'),
+      findsOneWidget,
+    );
+    expect(find.text('Got it'), findsOneWidget);
+    expect(store.filter, NoteFilter.favorites);
+    expect(observer.pagePushCount, 1);
+    expect(find.byType(HomePage), findsOneWidget);
+    expect(find.byType(SearchPage), findsNothing);
+
+    await tester.tap(find.text('Got it'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(NotesInfoDialog), findsNothing);
+    expect(find.byType(HomePage), findsOneWidget);
+    expect(store.filter, NoteFilter.favorites);
+    expect(observer.pagePushCount, 1);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Info closes with platform Back at increased text scale', (
+    tester,
+  ) async {
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.binding.setSurfaceSize(const Size(320, 720));
+    final store = NotesStore(SwipeTestRepository([]));
+    await tester.pumpWidget(_homeWithStore(store, textScale: 1.5));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.bySemanticsLabel('Info'));
+    await tester.pumpAndSettle();
+    expect(find.byType(NotesInfoDialog), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(find.byType(NotesInfoDialog), findsNothing);
+    expect(find.byType(HomePage), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -280,13 +357,25 @@ void main() {
 }
 
 Widget _home(List<Note> notes, double textScale) {
+  return _homeWithStore(
+    NotesStore(SwipeTestRepository(notes)),
+    textScale: textScale,
+  );
+}
+
+Widget _homeWithStore(
+  NotesStore store, {
+  double textScale = 1,
+  List<NavigatorObserver> observers = const [],
+}) {
   return MaterialApp(
     theme: AppTheme.dark,
+    navigatorObservers: observers,
     home: MediaQuery(
       data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
       child: HomePage(
-        key: ValueKey('${notes.length}-$textScale'),
-        store: NotesStore(SwipeTestRepository(notes)),
+        key: ValueKey('${store.hashCode}-$textScale'),
+        store: store,
       ),
     ),
   );

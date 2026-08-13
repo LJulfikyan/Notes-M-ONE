@@ -371,6 +371,12 @@ Only one row should remain meaningfully open at a time.
 
 Do not replace it with corrected terminology unless the task explicitly changes the design decision.
 
+### Info
+
+* Info opens the compact instructional notes popup.
+* It must not toggle filters or navigate to another page.
+* The popup closes with `Got it` or normal platform Back.
+
 ### Editor / Preview
 
 Editor View/Preview must **not** push another Reader route repeatedly.

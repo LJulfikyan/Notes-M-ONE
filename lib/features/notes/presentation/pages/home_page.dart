@@ -6,6 +6,7 @@ import '../stores/notes_store.dart';
 import '../widgets/empty_notes_view.dart';
 import '../widgets/header_button.dart';
 import '../widgets/note_filter_bar.dart';
+import '../widgets/notes_info_dialog.dart';
 import '../widgets/notes_list.dart';
 import 'note_editor_page.dart';
 import 'search_page.dart';
@@ -55,7 +56,7 @@ class _HomePageState extends State<HomePage> {
           HeaderButton(
             icon: const Icon(Icons.info_outline_rounded),
             label: 'Info',
-            onPressed: () {},
+            onPressed: _showInfo,
           ),
           const SizedBox(width: 23),
         ],
@@ -105,6 +106,15 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _showInfo() {
+    return showDialog<void>(
+      context: context,
+      barrierColor: NotesInfoDialog.barrierColor,
+      barrierDismissible: false,
+      builder: (_) => const NotesInfoDialog(),
     );
   }
 }

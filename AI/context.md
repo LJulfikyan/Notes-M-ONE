@@ -183,7 +183,8 @@ These are not reasons to redesign the app. Make the smallest coherent implementa
 - dirty editor Save -> save dialog
 - saved note stays unchanged until confirmed Save
 - favorite is principally toggled from the home swipe interaction
-- populated Home always shows All / Favorites / Recent; Info remains inert
+- populated Home always shows All / Favorites / Recent; Info opens a compact
+  instructional modal and never toggles filters or navigates to another page
 - Editor Edit and Preview are modes of the same route; Preview renders the
   current unsaved draft, and Preview Back returns to Edit
 
@@ -242,8 +243,8 @@ The current matrix uses 320×720, 393×720, and 768×720 logical viewports with
 text scales 0.9, 1.0, and 1.5. Preserve or update it whenever the home layout
 changes. Focused tests also exercise draft lifecycle flushing, confirmation
 outcomes, persisted favorite/delete actions, search/filter behavior, and swipe
-cancellation/disposal. At submission finalization, `flutter test` reports 68
-passing tests.
+cancellation/disposal. The Info popup adds two focused widget tests, bringing
+the suite to 70 tests.
 
 Before concluding an implementation task, run:
 

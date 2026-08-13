@@ -108,4 +108,5 @@ Frame 06 shows `All`, `Favorites`, and `Recent`, but the Figma does not define
 an entry action or connect those filters to the Info control.
 
 **Resolution:** treat the filters as part of populated Home. Keep Info visible
-and inert rather than overloading it or inventing an unsupported destination.
+without overloading it as filter entry. Info opens a compact instructional
+popup as an explicit product assumption and does not navigate to another page.
