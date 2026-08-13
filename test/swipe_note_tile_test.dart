@@ -113,7 +113,6 @@ void main() {
 
     final foreground = find.byKey(const ValueKey('swipe-translation-1'));
     expect(tester.getSize(foreground).width, 348);
-    expect(tester.getSize(foreground).height, closeTo(106, 1.5));
     expect(_translation(tester, 1), 0);
     expect(find.byKey(const ValueKey('swipe-delete-background')), findsNothing);
     expect(
@@ -208,6 +207,48 @@ void main() {
     expect(favoriteOpenRadius.bottomLeft, Radius.zero);
     expect(favoriteOpenRadius.topRight.x, closedRadius.topRight.x);
     expect(favoriteOpenRadius.bottomRight.x, closedRadius.bottomRight.x);
+  });
+
+  testWidgets('swipe backgrounds follow short and multiline card heights', (
+    tester,
+  ) async {
+    await _setReferenceSize(tester);
+    final store = NotesStore(
+      SwipeTestRepository([
+        _note(1, title: 'Short'),
+        _note(
+          2,
+          title:
+              'A deliberately long note title that wraps naturally across several lines',
+        ),
+      ]),
+    );
+    await tester.pumpWidget(_home(store));
+    await tester.pumpAndSettle();
+
+    await _dragNote(tester, 1, const Offset(90, 0));
+    final shortForegroundHeight = tester
+        .getSize(find.byKey(const ValueKey('swipe-translation-1')))
+        .height;
+    expect(
+      tester
+          .getSize(find.byKey(const ValueKey('swipe-favorite-background')))
+          .height,
+      shortForegroundHeight,
+    );
+
+    await _dragNote(tester, 2, const Offset(-180, 0));
+    final multilineForegroundHeight = tester
+        .getSize(find.byKey(const ValueKey('swipe-translation-2')))
+        .height;
+    expect(multilineForegroundHeight, greaterThan(shortForegroundHeight));
+    expect(
+      tester
+          .getSize(find.byKey(const ValueKey('swipe-delete-background')))
+          .height,
+      multilineForegroundHeight,
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('a below-threshold drag settles closed without an action', (

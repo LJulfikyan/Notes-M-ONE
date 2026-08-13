@@ -113,7 +113,13 @@ void main() {
     final noteRect = tester.getRect(find.byType(NoteCard));
     expect(noteRect.left, 23);
     expect(noteRect.width, 348);
-    expect(noteRect.height, closeTo(106, 1.5));
+    final cardPadding = tester.widget<Padding>(
+      find.descendant(
+        of: find.byType(NoteCard),
+        matching: find.byType(Padding),
+      ),
+    );
+    expect(cardPadding.padding, const EdgeInsets.all(28));
     final noteText = tester.widget<Text>(find.text('Short'));
     expect(noteText.style?.fontFamily, 'Nunito');
     expect(noteText.style?.fontSize, 25);
@@ -123,6 +129,33 @@ void main() {
       tester.getSize(find.byType(FloatingActionButton)),
       const Size.square(66),
     );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('note cards grow from their naturally wrapped text', (
+    tester,
+  ) async {
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.binding.setSurfaceSize(const Size(393, 852));
+    const shortTitle = 'Short';
+    const longTitle =
+        'A deliberately long note title that wraps naturally across several lines';
+    await tester.pumpWidget(
+      _home([
+        _note(id: 1, title: shortTitle, body: '', color: NoteColor.yellow),
+        _note(id: 2, title: longTitle, body: '', color: NoteColor.cyan),
+      ], 1),
+    );
+    await tester.pumpAndSettle();
+
+    final shortCard = find.byKey(const ValueKey('swipe-translation-1'));
+    final longCard = find.byKey(const ValueKey('swipe-translation-2'));
+    expect(
+      tester.getSize(shortCard).height,
+      lessThan(tester.getSize(longCard).height),
+    );
+    expect(tester.widget<Text>(find.text(longTitle)).maxLines, isNull);
+    expect(tester.widget<Text>(find.text(longTitle)).overflow, isNull);
     expect(tester.takeException(), isNull);
   });
 

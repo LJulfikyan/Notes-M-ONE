@@ -26,22 +26,19 @@ class NoteCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: borderRadius,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 106),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 30),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  note.title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF252525),
-                    fontFamily: 'Nunito',
-                    fontSize: 25,
-                    height: 1,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: 0,
-                  ),
+          child: Padding(
+            padding: const EdgeInsets.all(28),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                note.title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: const Color(0xFF252525),
+                  fontFamily: 'Nunito',
+                  fontSize: 25,
+                  height: 1,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0,
                 ),
               ),
             ),

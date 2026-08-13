@@ -51,23 +51,29 @@ These controls must be visually square.
 
 Do not use a narrow 30 × 56 shape.
 
-## Note cards
+## Note card sizing
 
-Reference one-line card:
-approximately 348 × 84
+Note cards are content-driven.
 
-Two-line card:
-approximately 348 × 117
+Verified internal padding:
 
-Long three-line card shown in the favorite swipe state:
-approximately 348 × 150
+`EdgeInsets.all(28)`
 
-Height may grow with wrapped content, but vertical padding must preserve the
-Figma rhythm.
+Do not impose a fixed or arbitrary minimum visual height based on the sample
+screens.
 
-Do not create flat 40–45 high cards at the reference width.
+Card height is determined by:
 
-Card foreground always owns the FULL note width.
+vertical padding + rendered text height
+
+With the verified Nunito 25px / 100% line-height card text, short and wrapped
+notes must naturally have different heights.
+
+Card foreground always owns the full note width. Text wraps naturally without
+truncation, and the card grows by the rendered number of lines.
+
+The swipe action background and translated foreground must always use the same
+dynamic row height.
 
 ## Favorite swipe
 
