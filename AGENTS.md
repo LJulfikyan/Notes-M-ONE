@@ -3,7 +3,11 @@
 ## Project
 
 This repository is the M-One Flutter Notes challenge. Build a small, production-quality local notes app that closely follows the supplied design while making deliberate decisions where the design is incomplete or contradictory.
-
+For every UI task, `docs/VISUAL_ACCEPTANCE.md` is mandatory reading.
+Its visual and interaction rules override default Material widget behavior.
+For UI work, read `docs/REFERENCE_GEOMETRY.md`.
+At the 393×852 reference viewport, its measured geometry is the visual
+acceptance baseline. Do not substitute default Material dimensions.
 Read these before changing code:
 - `AI/context.md`
 - `docs/CHALLENGE_SUMMARY.md`
