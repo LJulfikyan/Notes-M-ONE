@@ -8,8 +8,8 @@ import '../../domain/note_draft.dart';
 import '../widgets/contained_icon_button.dart';
 import '../widgets/editor_confirmation_dialog.dart';
 import '../widgets/editor_toolbar.dart';
+import 'editor_presentation_mode.dart';
 import 'note_editor_page.dart';
-import 'note_reader_page.dart';
 
 class NoteEditorPageState extends State<NoteEditorPage>
     with WidgetsBindingObserver {
@@ -23,6 +23,7 @@ class NoteEditorPageState extends State<NoteEditorPage>
   Future<void> _draftWrite = Future<void>.value();
   int _draftRevision = 0;
   NoteColor? _color;
+  EditorPresentationMode _presentationMode = EditorPresentationMode.edit;
   bool _initialized = false;
   bool _isSaved = false;
   String _originalTitle = '';
@@ -70,10 +71,20 @@ class NoteEditorPageState extends State<NoteEditorPage>
   @override
   Widget build(BuildContext context) {
     final favorite = widget.note?.isFavorite ?? false;
+    final isPreview = _presentationMode == EditorPresentationMode.preview;
     final keyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
     final toolbarVisible =
         keyboardVisible &&
         (_titleFocusNode.hasFocus || _bodyFocusNode.hasFocus);
+    if (isPreview) {
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _handleBack();
+        },
+        child: _buildPreview(),
+      );
+    }
     return PopScope(
       canPop: !_isDirty || _isSaved,
       onPopInvokedWithResult: (didPop, _) {
@@ -203,6 +214,80 @@ class NoteEditorPageState extends State<NoteEditorPage>
               if (toolbarVisible) const EditorToolbar(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPreview() {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 23),
+              child: SizedBox(
+                height: 47,
+                child: Row(
+                  children: [
+                    ContainedIconButton(
+                      key: const ValueKey('editor-preview-back-control'),
+                      tooltip: 'Back',
+                      icon: const Icon(Icons.chevron_left_rounded),
+                      onPressed: _showEdit,
+                      size: 47,
+                      iconSize: 25,
+                    ),
+                    const Spacer(),
+                    ContainedIconButton(
+                      key: const ValueKey('editor-preview-edit-control'),
+                      tooltip: 'Edit note',
+                      icon: const Icon(Icons.edit_rounded),
+                      onPressed: _showEdit,
+                      size: 47,
+                      iconSize: 21,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Expanded(
+              child: SingleChildScrollView(
+                key: const ValueKey('editor-preview-scroll-view'),
+                padding: const EdgeInsets.fromLTRB(23, 0, 23, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _titleController.text,
+                      key: const ValueKey('editor-preview-title'),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 34,
+                        height: 1.25,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0,
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    Text(
+                      _bodyController.text,
+                      key: const ValueKey('editor-preview-body'),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        height: 1.5,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -338,6 +423,10 @@ class NoteEditorPageState extends State<NoteEditorPage>
   }
 
   Future<void> _handleBack() async {
+    if (_presentationMode == EditorPresentationMode.preview) {
+      _showEdit();
+      return;
+    }
     if (!_isDirty) {
       if (mounted && Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
@@ -358,14 +447,12 @@ class NoteEditorPageState extends State<NoteEditorPage>
   }
 
   void _preview() {
-    final note = widget.note;
-    if (note != null) {
-      Navigator.of(context).push<void>(
-        MaterialPageRoute(
-          builder: (_) => NoteReaderPage(store: widget.store, note: note),
-        ),
-      );
-    }
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() => _presentationMode = EditorPresentationMode.preview);
+  }
+
+  void _showEdit() {
+    setState(() => _presentationMode = EditorPresentationMode.edit);
   }
 
   Future<void> _discard() async {

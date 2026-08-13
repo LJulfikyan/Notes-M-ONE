@@ -92,7 +92,9 @@ void main() {
     expect(find.byType(NoteReaderPage), findsNothing);
   });
 
-  testWidgets('saved editor changes refresh the reader', (tester) async {
+  testWidgets('Reader Edit Preview Edit Save refreshes the reader', (
+    tester,
+  ) async {
     final note = _note();
     final repository = SwipeTestRepository([note]);
     final store = NotesStore(repository);
@@ -104,6 +106,13 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'Updated title');
     await tester.enterText(find.byType(TextField).last, 'Updated body');
     await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.byTooltip('Preview note'));
+    await tester.pumpAndSettle();
+    expect(find.text('Updated title'), findsOneWidget);
+    expect(find.text('Updated body'), findsOneWidget);
+    await tester.tap(find.byTooltip('Edit note'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsNWidgets(2));
     await tester.tap(find.byTooltip('Save note'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Save'));

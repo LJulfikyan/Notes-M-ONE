@@ -8,6 +8,7 @@ import 'package:notes_m_one/features/notes/presentation/pages/note_editor_page.d
 import 'package:notes_m_one/features/notes/presentation/stores/notes_store.dart';
 import 'package:notes_m_one/features/notes/presentation/widgets/editor_toolbar.dart';
 
+import 'support/counting_navigator_observer.dart';
 import 'support/swipe_test_repository.dart';
 
 void main() {
@@ -46,6 +47,105 @@ void main() {
       tester.widget<TextField>(fields.last).controller?.text,
       'Saved body',
     );
+  });
+
+  testWidgets('Eye switches the editor to an in-route preview', (tester) async {
+    final note = _note();
+
+    await _pumpEditor(tester, NotesStore(SwipeTestRepository([note])), note);
+    expect(find.byIcon(Icons.visibility_outlined), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Preview note'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('editor-preview-title')), findsOneWidget);
+    expect(find.byKey(const ValueKey('editor-preview-body')), findsOneWidget);
+    expect(find.byType(TextField), findsNothing);
+    expect(find.byIcon(Icons.edit_rounded), findsOneWidget);
+    expect(find.byType(NoteEditorPage), findsOneWidget);
+  });
+
+  testWidgets('preview displays unsaved editor draft changes', (tester) async {
+    final note = _note();
+
+    await _pumpEditor(tester, NotesStore(SwipeTestRepository([note])), note);
+    await tester.enterText(
+      find.byType(TextField).first,
+      'Unsaved preview title',
+    );
+    await tester.enterText(find.byType(TextField).last, 'Unsaved preview body');
+    await tester.tap(find.byTooltip('Preview note'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Unsaved preview title'), findsOneWidget);
+    expect(find.text('Unsaved preview body'), findsOneWidget);
+    expect(find.text('Saved title'), findsNothing);
+    expect(find.text('Saved body'), findsNothing);
+  });
+
+  testWidgets('Preview Edit returns to the same editing session', (
+    tester,
+  ) async {
+    final note = _note();
+
+    await _pumpEditor(tester, NotesStore(SwipeTestRepository([note])), note);
+    await tester.enterText(find.byType(TextField).first, 'Session title');
+    await tester.enterText(find.byType(TextField).last, 'Session body');
+    await tester.tap(find.byTooltip('Preview note'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Edit note'));
+    await tester.pumpAndSettle();
+
+    final fields = find.byType(TextField);
+    expect(fields, findsNWidgets(2));
+    expect(
+      tester.widget<TextField>(fields.first).controller?.text,
+      'Session title',
+    );
+    expect(
+      tester.widget<TextField>(fields.last).controller?.text,
+      'Session body',
+    );
+  });
+
+  testWidgets('repeated Edit and Preview switches do not add routes', (
+    tester,
+  ) async {
+    final note = _note();
+    final observer = CountingNavigatorObserver();
+
+    await _pumpEditor(
+      tester,
+      NotesStore(SwipeTestRepository([note])),
+      note,
+      navigatorObservers: [observer],
+    );
+    expect(observer.pushCount, 1);
+
+    for (var index = 0; index < 4; index += 1) {
+      await tester.tap(find.byTooltip('Preview note'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Edit note'));
+      await tester.pumpAndSettle();
+    }
+
+    expect(observer.pushCount, 1);
+    expect(find.byType(NoteEditorPage), findsOneWidget);
+    expect(find.byType(TextField), findsNWidgets(2));
+  });
+
+  testWidgets('Back from Preview returns to Editor mode', (tester) async {
+    final note = _note();
+
+    await _pumpEditor(tester, NotesStore(SwipeTestRepository([note])), note);
+    await tester.tap(find.byTooltip('Preview note'));
+    await tester.pumpAndSettle();
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('editor-preview-title')), findsNothing);
+    expect(find.byType(NoteEditorPage), findsOneWidget);
+    expect(find.byType(TextField), findsNWidgets(2));
   });
 
   testWidgets('long title wraps naturally without overflow', (tester) async {
@@ -299,6 +399,7 @@ Future<void> _pumpEditor(
   Size size = const Size(393, 852),
   double textScale = 1,
   double viewInsetsBottom = 0,
+  List<NavigatorObserver> navigatorObservers = const [],
 }) async {
   await tester.binding.setSurfaceSize(size);
   addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -308,6 +409,7 @@ Future<void> _pumpEditor(
       note,
       textScale: textScale,
       viewInsetsBottom: viewInsetsBottom,
+      navigatorObservers: navigatorObservers,
     ),
   );
   await tester.pumpAndSettle();
@@ -319,9 +421,11 @@ Widget _editor(
   Key? key,
   double textScale = 1,
   double viewInsetsBottom = 0,
+  List<NavigatorObserver> navigatorObservers = const [],
 }) {
   return MaterialApp(
     theme: AppTheme.dark,
+    navigatorObservers: navigatorObservers,
     builder: (context, child) => MediaQuery(
       data: MediaQuery.of(context).copyWith(
         textScaler: TextScaler.linear(textScale),

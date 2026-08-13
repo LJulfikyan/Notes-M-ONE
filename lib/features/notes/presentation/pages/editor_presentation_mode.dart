@@ -1,0 +1,1 @@
+enum EditorPresentationMode { edit, preview }
