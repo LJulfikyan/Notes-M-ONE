@@ -5,10 +5,16 @@ import '../../domain/note.dart';
 import '../../domain/note_color.dart';
 
 class NoteCard extends StatelessWidget {
-  const NoteCard({super.key, required this.note, required this.onTap});
+  const NoteCard({
+    super.key,
+    required this.note,
+    required this.onTap,
+    this.borderRadius = const BorderRadius.all(Radius.circular(6)),
+  });
 
   final Note note;
   final VoidCallback onTap;
+  final BorderRadius borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +22,10 @@ class NoteCard extends StatelessWidget {
       width: double.infinity,
       child: Material(
         color: _colorFor(note.color),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: borderRadius,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: borderRadius,
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 106),
             child: Padding(

@@ -30,6 +30,7 @@ class _SwipeNoteTileState extends State<SwipeNoteTile>
   static const _favoriteRevealThreshold = _favoriteActionWidth / 2;
   static const _deleteRevealFraction = 0.35;
   static const _revealVelocity = 700.0;
+  static const _cardCornerRadius = 6.0;
 
   late final AnimationController _controller;
   Animation<double>? _animation;
@@ -89,6 +90,7 @@ class _SwipeNoteTileState extends State<SwipeNoteTile>
                       child: NoteCard(
                         note: widget.note,
                         onTap: _onForegroundTap,
+                        borderRadius: _foregroundBorderRadius,
                       ),
                     ),
                   ),
@@ -98,6 +100,17 @@ class _SwipeNoteTileState extends State<SwipeNoteTile>
           ),
         );
       },
+    );
+  }
+
+  BorderRadius get _foregroundBorderRadius {
+    final favoriteProgress = (_offset / _favoriteActionWidth).clamp(0.0, 1.0);
+    final leftRadius = _cardCornerRadius * (1 - favoriteProgress);
+    return BorderRadius.only(
+      topLeft: Radius.circular(leftRadius),
+      bottomLeft: Radius.circular(leftRadius),
+      topRight: const Radius.circular(_cardCornerRadius),
+      bottomRight: const Radius.circular(_cardCornerRadius),
     );
   }
 

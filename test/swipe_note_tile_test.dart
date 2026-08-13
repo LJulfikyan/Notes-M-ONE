@@ -187,6 +187,29 @@ void main() {
     expect(_translation(tester, 1), 0);
   });
 
+  testWidgets('favorite reveal squares only the foreground left corners', (
+    tester,
+  ) async {
+    await _setReferenceSize(tester);
+    final store = NotesStore(SwipeTestRepository([_note(1)]));
+    await tester.pumpWidget(_home(store));
+    await tester.pumpAndSettle();
+
+    final closedRadius = _foregroundRadius(tester, 1);
+    expect(closedRadius.topLeft.x, 6);
+    expect(closedRadius.bottomLeft.x, 6);
+    expect(closedRadius.topRight.x, 6);
+    expect(closedRadius.bottomRight.x, 6);
+
+    await _dragNote(tester, 1, const Offset(90, 0));
+
+    final favoriteOpenRadius = _foregroundRadius(tester, 1);
+    expect(favoriteOpenRadius.topLeft, Radius.zero);
+    expect(favoriteOpenRadius.bottomLeft, Radius.zero);
+    expect(favoriteOpenRadius.topRight.x, closedRadius.topRight.x);
+    expect(favoriteOpenRadius.bottomRight.x, closedRadius.bottomRight.x);
+  });
+
   testWidgets('a below-threshold drag settles closed without an action', (
     tester,
   ) async {
@@ -314,6 +337,14 @@ double _translation(WidgetTester tester, int id) {
       .widget<Transform>(find.byKey(ValueKey('swipe-translation-$id')))
       .transform
       .storage[12];
+}
+
+BorderRadius _foregroundRadius(WidgetTester tester, int id) {
+  final material = find.descendant(
+    of: find.byKey(ValueKey('swipe-translation-$id')),
+    matching: find.byType(Material),
+  );
+  return tester.widget<Material>(material).borderRadius! as BorderRadius;
 }
 
 Widget _home(NotesStore store) {
