@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../domain/note_color.dart';
 import '../../domain/note_draft.dart';
 import '../widgets/contained_icon_button.dart';
+import '../widgets/editor_confirmation_dialog.dart';
 import '../widgets/editor_toolbar.dart';
 import 'note_editor_page.dart';
 import 'note_reader_page.dart';
@@ -291,8 +292,8 @@ class NoteEditorPageState extends State<NoteEditorPage>
     if (_isDirty) {
       final confirmed = await showDialog<bool>(
         context: context,
-        builder: (context) => _confirmationDialog(
-          context: context,
+        barrierColor: Colors.black.withValues(alpha: 0.68),
+        builder: (context) => const EditorConfirmationDialog(
           message: 'Save changes?',
           confirmLabel: 'Save',
           discardResult: false,
@@ -338,8 +339,8 @@ class NoteEditorPageState extends State<NoteEditorPage>
     }
     final discard = await showDialog<bool>(
       context: context,
-      builder: (context) => _confirmationDialog(
-        context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.68),
+      builder: (context) => const EditorConfirmationDialog(
         message: 'Are you sure you want to discard changes?',
         confirmLabel: 'Keep',
         discardResult: true,
@@ -347,83 +348,6 @@ class NoteEditorPageState extends State<NoteEditorPage>
       ),
     );
     if (discard == true) await _discard();
-  }
-
-  Widget _confirmationDialog({
-    required BuildContext context,
-    required String message,
-    required String confirmLabel,
-    required bool discardResult,
-    required bool confirmResult,
-  }) {
-    return Dialog(
-      backgroundColor: AppColors.darkSurface,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 28),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.info_outline_rounded, color: Colors.white54),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _dialogAction(
-                    context: context,
-                    label: 'Discard',
-                    color: AppColors.deleteAction,
-                    foregroundColor: Colors.white,
-                    result: discardResult,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _dialogAction(
-                    context: context,
-                    label: confirmLabel,
-                    color: AppColors.noteGreen,
-                    foregroundColor: AppColors.background,
-                    result: confirmResult,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _dialogAction({
-    required BuildContext context,
-    required String label,
-    required Color color,
-    required Color foregroundColor,
-    required bool result,
-  }) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(3),
-      child: TextButton(
-        onPressed: () => Navigator.pop(context, result),
-        style: TextButton.styleFrom(
-          backgroundColor: color,
-          foregroundColor: foregroundColor,
-          minimumSize: const Size(0, 28),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-          splashFactory: NoSplash.splashFactory,
-          overlayColor: Colors.white12,
-        ),
-        child: Text(label),
-      ),
-    );
   }
 
   void _preview() {
