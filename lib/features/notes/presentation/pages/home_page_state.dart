@@ -26,10 +26,11 @@ class HomePageState extends State<HomePage> {
         toolbarHeight: 120,
         titleSpacing: 23,
         title: const Text('Notes'),
-        titleTextStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(
+        titleTextStyle: const TextStyle(
           color: Colors.white,
-          fontSize: 28,
+          fontSize: 40,
           fontWeight: FontWeight.w500,
+          height: 1,
         ),
         actions: [
           HeaderButton(
@@ -41,7 +42,7 @@ class HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 19),
           HeaderButton(
             icon: Icons.info_outline_rounded,
             label: 'Show filters',

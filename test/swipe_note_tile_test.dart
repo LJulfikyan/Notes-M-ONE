@@ -19,7 +19,7 @@ void main() {
 
     final foreground = find.byKey(const ValueKey('swipe-translation-1'));
     expect(tester.getSize(foreground).width, 348);
-    expect(tester.getSize(foreground).height, closeTo(84, 1.5));
+    expect(tester.getSize(foreground).height, closeTo(106, 1.5));
     expect(_translation(tester, 1), 0);
     expect(find.byKey(const ValueKey('swipe-delete-background')), findsNothing);
     expect(

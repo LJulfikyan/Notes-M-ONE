@@ -65,9 +65,11 @@ void main() {
       find.byKey(const ValueKey('empty-notes-illustration')),
     );
     expect(illustrationRect.width, closeTo(320, 1));
-    expect(illustrationRect.height, closeTo(256, 1));
+    expect(illustrationRect.height, closeTo(262.4, 1));
     expect(illustrationRect.left, closeTo(37, 1));
     expect(illustrationRect.top, closeTo(279, 1));
+    final captionRect = tester.getRect(find.text('Create your first note !'));
+    expect(captionRect.top - illustrationRect.bottom, closeTo(19, 1));
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(
@@ -86,12 +88,17 @@ void main() {
     final infoRect = tester.getRect(controls.at(1));
     expect(searchRect.size, const Size.square(47));
     expect(infoRect.size, const Size.square(47));
-    expect(infoRect.left - searchRect.right, 12);
+    expect(infoRect.left - searchRect.right, 19);
+
+    final appBar = tester.widget<AppBar>(find.byType(AppBar));
+    expect(appBar.titleTextStyle?.fontSize, 40);
 
     final noteRect = tester.getRect(find.byType(NoteCard));
     expect(noteRect.left, 23);
     expect(noteRect.width, 348);
-    expect(noteRect.height, closeTo(84, 1.5));
+    expect(noteRect.height, closeTo(106, 1.5));
+    final noteText = tester.widget<Text>(find.text('Short'));
+    expect(noteText.style?.fontSize, 20);
     expect(
       tester.getSize(find.byType(FloatingActionButton)),
       const Size.square(66),
