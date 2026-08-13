@@ -10,7 +10,8 @@ import '../stores/notes_store.dart';
 import '../widgets/contained_icon_button.dart';
 import '../widgets/editor_confirmation_dialog.dart';
 import '../widgets/editor_toolbar.dart';
-import 'editor_presentation_mode.dart';
+
+enum _EditorPresentationMode { edit, preview }
 
 class NoteEditorPage extends StatefulWidget {
   const NoteEditorPage({super.key, required this.store, this.note});
@@ -34,7 +35,7 @@ class _NoteEditorPageState extends State<NoteEditorPage>
   Future<void> _draftWrite = Future<void>.value();
   int _draftRevision = 0;
   NoteColor? _color;
-  EditorPresentationMode _presentationMode = EditorPresentationMode.edit;
+  _EditorPresentationMode _presentationMode = _EditorPresentationMode.edit;
   bool _initialized = false;
   bool _isSaved = false;
   String _originalTitle = '';
@@ -82,7 +83,7 @@ class _NoteEditorPageState extends State<NoteEditorPage>
   @override
   Widget build(BuildContext context) {
     final favorite = widget.note?.isFavorite ?? false;
-    final isPreview = _presentationMode == EditorPresentationMode.preview;
+    final isPreview = _presentationMode == _EditorPresentationMode.preview;
     final keyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
     final toolbarVisible =
         keyboardVisible &&
@@ -396,7 +397,7 @@ class _NoteEditorPageState extends State<NoteEditorPage>
   }
 
   Future<void> _handleBack() async {
-    if (_presentationMode == EditorPresentationMode.preview) {
+    if (_presentationMode == _EditorPresentationMode.preview) {
       _showEdit();
       return;
     }
@@ -421,11 +422,11 @@ class _NoteEditorPageState extends State<NoteEditorPage>
 
   void _preview() {
     FocusManager.instance.primaryFocus?.unfocus();
-    setState(() => _presentationMode = EditorPresentationMode.preview);
+    setState(() => _presentationMode = _EditorPresentationMode.preview);
   }
 
   void _showEdit() {
-    setState(() => _presentationMode = EditorPresentationMode.edit);
+    setState(() => _presentationMode = _EditorPresentationMode.edit);
   }
 
   Future<void> _discard() async {
