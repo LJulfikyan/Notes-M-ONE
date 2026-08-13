@@ -28,19 +28,32 @@ class NoteCard extends StatelessWidget {
           borderRadius: borderRadius,
           child: Padding(
             padding: const EdgeInsets.all(28),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                note.title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: const Color(0xFF252525),
-                  fontFamily: 'Nunito',
-                  fontSize: 25,
-                  height: 1,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 0,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    note.title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: const Color(0xFF252525),
+                      fontFamily: 'Nunito',
+                      fontSize: 25,
+                      height: 1,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 0,
+                    ),
+                  ),
                 ),
-              ),
+                if (note.isFavorite) ...[
+                  const SizedBox(width: 12),
+                  Icon(
+                    Icons.star_border_rounded,
+                    key: ValueKey('note-card-favorite-${note.id}'),
+                    color: const Color(0xFF252525),
+                    size: 24,
+                  ),
+                ],
+              ],
             ),
           ),
         ),

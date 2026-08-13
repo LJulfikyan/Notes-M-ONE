@@ -167,6 +167,48 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('favorite cards show a reserved outline-star indicator', (
+    tester,
+  ) async {
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.binding.setSurfaceSize(const Size(393, 852));
+    const favoriteTitle =
+        'A long favorite note title that wraps naturally without crossing its indicator';
+    await tester.pumpWidget(
+      _home([
+        _note(id: 1, title: 'Ordinary note', body: '', color: NoteColor.yellow),
+        _note(
+          id: 2,
+          title: favoriteTitle,
+          body: '',
+          color: NoteColor.green,
+          isFavorite: true,
+        ),
+      ], 1),
+    );
+    await tester.pumpAndSettle();
+
+    final favoriteIndicator = find.byKey(
+      const ValueKey('note-card-favorite-2'),
+    );
+    expect(favoriteIndicator, findsOneWidget);
+    expect(find.byKey(const ValueKey('note-card-favorite-1')), findsNothing);
+    expect(
+      tester.widget<Icon>(favoriteIndicator).icon,
+      Icons.star_border_rounded,
+    );
+    final favoriteCardRect = tester.getRect(
+      find.byKey(const ValueKey('swipe-translation-2')),
+    );
+    final favoriteTextRect = tester.getRect(find.text(favoriteTitle));
+    final indicatorRect = tester.getRect(favoriteIndicator);
+    expect(favoriteCardRect.right - indicatorRect.right, 28);
+    expect(favoriteTextRect.right, lessThanOrEqualTo(indicatorRect.left - 12));
+    expect(favoriteTextRect.height, greaterThan(25));
+    expect(tester.widget<Text>(find.text(favoriteTitle)).maxLines, isNull);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('reference filter controls stay left aligned', (tester) async {
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.binding.setSurfaceSize(const Size(393, 852));
@@ -231,6 +273,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Favorite note'), findsOneWidget);
+    expect(find.byKey(const ValueKey('note-card-favorite-2')), findsOneWidget);
     expect(find.text(notes.first.title), findsNothing);
     expect(tester.takeException(), isNull);
   });
