@@ -55,6 +55,10 @@ because the brief defines frames 05 and 06 as alternatives; this project chose
 **06 — Filter View**. `All`, `Favorites`, and `Recent` provide a clearer,
 scalable list model than a separate favorites screen.
 
+The Figma does not specify how frame 06 is entered. Its filters are therefore
+treated as part of populated Home instead of overloading the unrelated Info
+control. Info remains visible, but no destination is invented for it.
+
 `Recent` means all notes ordered by `updatedAt` descending. This is an explicit
 implementation assumption because the design does not define a recent time
 window.
@@ -92,8 +96,8 @@ cancellation, interruption, single-open-row behavior, and tap-only actions.
 - Nunito and the directly verified Home/card/Editor/empty-caption styles are
   exact, but secondary text sizes and weights were visually matched because
   those Figma layer values were not extracted.
-- The header's info-shaped control exposes frame 06 filters. The design does
-  not define a separate Info destination, so none was invented.
+- The header's info-shaped control remains inert because the design defines no
+  Info destination. Frame 06 filters are directly visible on populated Home.
 - The Figma italicizes a sample Reader paragraph, but the challenge requires
   plain strings; the app intentionally renders it as plain text.
 - Draft persistence is deliberately small and robust, but input entered within

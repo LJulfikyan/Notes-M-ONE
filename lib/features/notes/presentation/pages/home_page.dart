@@ -20,8 +20,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _filtersVisible = false;
-
   @override
   void initState() {
     super.initState();
@@ -56,8 +54,8 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 19),
           HeaderButton(
             icon: const Icon(Icons.info_outline_rounded),
-            label: 'Show filters',
-            onPressed: () => setState(() => _filtersVisible = !_filtersVisible),
+            label: 'Info',
+            onPressed: () {},
           ),
           const SizedBox(width: 23),
         ],
@@ -73,18 +71,12 @@ class _HomePageState extends State<HomePage> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 180),
-                  alignment: Alignment.topLeft,
-                  child: _filtersVisible
-                      ? Padding(
-                          padding: const EdgeInsets.fromLTRB(23, 8, 23, 12),
-                          child: NoteFilterBar(
-                            selected: widget.store.filter,
-                            onSelected: widget.store.setFilter,
-                          ),
-                        )
-                      : const SizedBox.shrink(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(23, 8, 23, 12),
+                  child: NoteFilterBar(
+                    selected: widget.store.filter,
+                    onSelected: widget.store.setFilter,
+                  ),
                 ),
                 Expanded(child: NotesList(store: widget.store)),
               ],

@@ -41,6 +41,7 @@ void main() {
         await tester.pumpWidget(_home([], textScale));
         await tester.pumpAndSettle();
         expect(find.text('Create your first note !'), findsOneWidget);
+        expect(find.byType(NoteFilterChip), findsNothing);
         expect(tester.takeException(), isNull);
 
         await tester.pumpWidget(_home(populatedNotes, textScale));
@@ -133,9 +134,6 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.bySemanticsLabel('Show filters'));
-    await tester.pumpAndSettle();
-
     final filters = find.byType(NoteFilterChip);
     expect(filters, findsNWidgets(3));
     final allRect = tester.getRect(filters.at(0));
@@ -147,6 +145,11 @@ void main() {
     expect(favoritesRect.size, const Size(94, 35));
     expect(recentRect.left, 184);
     expect(recentRect.size, const Size(78, 35));
+
+    await tester.tap(find.bySemanticsLabel('Info'));
+    await tester.pumpAndSettle();
+    expect(find.byType(NoteFilterChip), findsNWidgets(3));
+    expect(tester.getRect(filters.at(0)), allRect);
     expect(tester.takeException(), isNull);
   });
 
@@ -170,8 +173,6 @@ void main() {
     ];
 
     await tester.pumpWidget(_home(notes, 1.5));
-    await tester.pumpAndSettle();
-    await tester.tap(find.bySemanticsLabel('Show filters'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Favorites'));
     await tester.pumpAndSettle();

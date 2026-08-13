@@ -94,3 +94,11 @@ A swipe-to-delete state is drawn, but no confirmation/undo design exists.
 Frame 14 is selected in the supplied overview and therefore has a blue Figma border/title.
 
 **Resolution:** never render it in the app.
+
+## 15. Filter entry is unspecified
+
+Frame 06 shows `All`, `Favorites`, and `Recent`, but the Figma does not define
+an entry action or connect those filters to the Info control.
+
+**Resolution:** treat the filters as part of populated Home. Keep Info visible
+and inert rather than overloading it or inventing an unsupported destination.

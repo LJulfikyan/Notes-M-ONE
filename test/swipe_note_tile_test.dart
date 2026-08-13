@@ -58,8 +58,6 @@ void main() {
     );
     await tester.pumpWidget(_home(store));
     await tester.pumpAndSettle();
-    await tester.tap(find.bySemanticsLabel('Show filters'));
-    await tester.pumpAndSettle();
     await tester.tap(find.text('Favorites'));
     await tester.pumpAndSettle();
 
@@ -93,8 +91,6 @@ void main() {
       ]),
     );
     await tester.pumpWidget(_home(store));
-    await tester.pumpAndSettle();
-    await tester.tap(find.bySemanticsLabel('Show filters'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Recent'));
     await tester.pumpAndSettle();
