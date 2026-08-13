@@ -26,9 +26,7 @@ class SearchField extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Row(
           children: [
-            const SizedBox(width: 14),
-            const Icon(Icons.search_rounded, size: 18, color: Colors.white54),
-            const SizedBox(width: 10),
+            const SizedBox(width: 32),
             Expanded(
               child: TextField(
                 controller: controller,
@@ -60,7 +58,7 @@ class SearchField extends StatelessWidget {
                 button: true,
                 label: 'Clear search',
                 child: SizedBox(
-                  width: 42,
+                  width: 60,
                   height: 45,
                   child: InkWell(
                     onTap: onClear,

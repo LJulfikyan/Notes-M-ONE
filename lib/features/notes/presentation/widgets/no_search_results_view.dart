@@ -11,12 +11,11 @@ class NoSearchResultsView extends StatelessWidget {
       builder: (context, constraints) {
         final imageWidth = (constraints.maxWidth * 320 / 393).clamp(0.0, 320.0);
         final imageHeight = imageWidth * 240 / 370;
-        final top = (constraints.maxHeight * 256 / 763).clamp(72.0, 256.0);
         return SizedBox(
           width: constraints.maxWidth,
           height: constraints.maxHeight,
           child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(16, top, 16, 24),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -25,7 +24,7 @@ class NoSearchResultsView extends StatelessWidget {
                   width: imageWidth,
                   height: imageHeight,
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: 10),
                 const Text(
                   'File not found. Try searching again.',
                   textAlign: TextAlign.center,

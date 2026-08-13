@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:notes_m_one/core/theme/app_colors.dart';
 import 'package:notes_m_one/core/theme/app_theme.dart';
 import 'package:notes_m_one/features/notes/domain/note.dart';
 import 'package:notes_m_one/features/notes/domain/note_color.dart';
@@ -28,7 +29,7 @@ void main() {
           .widget<Text>(find.byKey(const ValueKey('reader-title')))
           .style
           ?.fontSize,
-      30,
+      34,
     );
     expect(
       tester
@@ -128,6 +129,7 @@ void main() {
       find.byKey(const ValueKey('reader-edit-control')),
     );
     expect(backRect.left, 23);
+    expect(backRect.top, 24);
     expect(backRect.size, const Size.square(47));
     expect(editRect.right, 370);
     expect(editRect.size, const Size.square(47));
@@ -314,8 +316,13 @@ void main() {
     final saveRect = tester.getRect(
       find.byKey(const ValueKey('dialog-save-action')),
     );
+    final infoRect = tester.getRect(find.byIcon(Icons.info_rounded));
+    final dialog = tester.widget<Dialog>(find.byType(Dialog));
     expect(dialogRect.width, closeTo(313, 1));
     expect(dialogRect.height, closeTo(225, 1));
+    expect(dialog.backgroundColor, AppColors.background);
+    expect(infoRect.center.dy - dialogRect.top, closeTo(57, 1));
+    expect(discardRect.top - dialogRect.top, closeTo(152, 1));
     expect(discardRect.size, const Size(105, 37));
     expect(saveRect.size, const Size(105, 37));
     expect(saveRect.left - discardRect.right, 16);

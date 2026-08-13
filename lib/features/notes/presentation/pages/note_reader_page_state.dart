@@ -20,6 +20,7 @@ class NoteReaderPageState extends State<NoteReaderPage> {
       body: SafeArea(
         child: Column(
           children: [
+            const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 23),
               child: SizedBox(
@@ -60,7 +61,7 @@ class NoteReaderPageState extends State<NoteReaderPage> {
                       key: const ValueKey('reader-title'),
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 30,
+                        fontSize: 34,
                         height: 1.25,
                         fontWeight: FontWeight.w400,
                         letterSpacing: 0,

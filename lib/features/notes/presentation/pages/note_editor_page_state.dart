@@ -292,7 +292,7 @@ class NoteEditorPageState extends State<NoteEditorPage>
     if (_isDirty) {
       final confirmed = await showDialog<bool>(
         context: context,
-        barrierColor: Colors.black.withValues(alpha: 0.68),
+        barrierColor: EditorConfirmationDialog.barrierColor,
         builder: (context) => const EditorConfirmationDialog(
           message: 'Save changes?',
           confirmLabel: 'Save',
@@ -339,7 +339,7 @@ class NoteEditorPageState extends State<NoteEditorPage>
     }
     final discard = await showDialog<bool>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.68),
+      barrierColor: EditorConfirmationDialog.barrierColor,
       builder: (context) => const EditorConfirmationDialog(
         message: 'Are you sure you want to discard changes?',
         confirmLabel: 'Keep',

@@ -22,6 +22,7 @@ void main() {
 
     expect(find.byType(TextField), findsOneWidget);
     expect(tester.widget<TextField>(find.byType(TextField)).autofocus, isTrue);
+    expect(find.byIcon(Icons.search_rounded), findsNothing);
     expect(find.text('Recipe ideas'), findsNothing);
     expect(find.text('Project planning'), findsNothing);
     expect(find.byType(NoSearchResultsView), findsNothing);
@@ -80,6 +81,12 @@ void main() {
     expect(illustration.assetPath, 'assets/images/search_no_results.svg');
     expect(illustration.width, closeTo(320, 1));
     expect(illustration.height, closeTo(207.6, 1));
+    final illustrationRect = tester.getRect(find.byType(EmbeddedRasterSvg));
+    final messageRect = tester.getRect(
+      find.text('File not found. Try searching again.'),
+    );
+    expect(illustrationRect.top, closeTo(77, 1));
+    expect(messageRect.top - illustrationRect.bottom, closeTo(10, 1));
   });
 
   testWidgets('clear search returns to the blank state', (tester) async {
@@ -128,7 +135,7 @@ void main() {
       find.byKey(const ValueKey('search-field-surface')),
     );
     expect(fieldRect.left, closeTo(30, 0.5));
-    expect(fieldRect.width, closeTo(333, 1));
+    expect(fieldRect.width, closeTo(341, 1));
     expect(fieldRect.height, 45);
     expect(tester.takeException(), isNull);
   });

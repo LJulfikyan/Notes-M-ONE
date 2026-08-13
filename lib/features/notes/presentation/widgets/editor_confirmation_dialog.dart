@@ -16,10 +16,12 @@ class EditorConfirmationDialog extends StatelessWidget {
   final bool discardResult;
   final bool confirmResult;
 
+  static const barrierColor = Color(0x80696969);
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: AppColors.darkSurface,
+      backgroundColor: AppColors.background,
       elevation: 0,
       insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -29,14 +31,14 @@ class EditorConfirmationDialog extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 225),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+            padding: const EdgeInsets.fromLTRB(24, 42, 24, 36),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Icon(
-                  Icons.info_outline_rounded,
-                  color: Colors.white54,
+                  Icons.info_rounded,
+                  color: Color(0xFF606060),
                   size: 30,
                 ),
                 Padding(
@@ -67,8 +69,8 @@ class EditorConfirmationDialog extends StatelessWidget {
                     _action(
                       context: context,
                       label: confirmLabel,
-                      color: AppColors.noteGreen,
-                      foregroundColor: AppColors.background,
+                      color: const Color(0xFF30BF71),
+                      foregroundColor: Colors.white,
                       result: confirmResult,
                     ),
                   ],

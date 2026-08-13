@@ -32,12 +32,16 @@ class SearchPageState extends State<SearchPage> {
           children: [
             LayoutBuilder(
               builder: (context, constraints) {
-                final inset = (constraints.maxWidth * 30 / 393).clamp(
+                final leftInset = (constraints.maxWidth * 30 / 393).clamp(
                   20.0,
                   30.0,
                 );
+                final rightInset = (constraints.maxWidth * 22 / 393).clamp(
+                  16.0,
+                  22.0,
+                );
                 return Padding(
-                  padding: EdgeInsets.fromLTRB(inset, 32, inset, 12),
+                  padding: EdgeInsets.fromLTRB(leftInset, 32, rightInset, 0),
                   child: SearchField(
                     controller: _controller,
                     onChanged: widget.store.setSearchQuery,
