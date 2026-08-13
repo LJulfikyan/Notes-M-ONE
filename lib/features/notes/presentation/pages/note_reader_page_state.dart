@@ -30,7 +30,7 @@ class NoteReaderPageState extends State<NoteReaderPage> {
                     ContainedIconButton(
                       key: const ValueKey('reader-back-control'),
                       tooltip: 'Back',
-                      icon: Icons.chevron_left_rounded,
+                      icon: const Icon(Icons.chevron_left_rounded),
                       onPressed: () => Navigator.of(context).pop(),
                       size: 47,
                       iconSize: 25,
@@ -39,7 +39,7 @@ class NoteReaderPageState extends State<NoteReaderPage> {
                     ContainedIconButton(
                       key: const ValueKey('reader-edit-control'),
                       tooltip: 'Edit note',
-                      icon: Icons.edit_rounded,
+                      icon: const Icon(Icons.edit_rounded),
                       onPressed: _edit,
                       size: 47,
                       iconSize: 21,

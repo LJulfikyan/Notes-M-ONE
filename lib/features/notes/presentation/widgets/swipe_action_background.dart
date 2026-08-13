@@ -32,10 +32,14 @@ class SwipeActionBackground extends StatelessWidget {
           ),
           color: isFavorite ? AppColors.favoriteAction : AppColors.deleteAction,
           child: Center(
-            child: Icon(
-              isFavorite ? Icons.star_border_rounded : Icons.delete_outline,
-              color: isFavorite ? AppColors.background : Colors.white,
-              size: 28,
+            child: IconTheme(
+              data: IconThemeData(
+                color: isFavorite ? AppColors.background : Colors.white,
+                size: 28,
+              ),
+              child: isFavorite
+                  ? const Icon(Icons.star_border_rounded)
+                  : const Icon(Icons.delete_outline),
             ),
           ),
         ),

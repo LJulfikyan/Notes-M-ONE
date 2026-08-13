@@ -36,7 +36,7 @@ class HomePageState extends State<HomePage> {
         ),
         actions: [
           HeaderButton(
-            icon: Icons.search_rounded,
+            icon: const Icon(Icons.search_rounded),
             label: 'Search notes',
             onPressed: () => Navigator.of(context).push<void>(
               MaterialPageRoute(
@@ -46,7 +46,7 @@ class HomePageState extends State<HomePage> {
           ),
           const SizedBox(width: 19),
           HeaderButton(
-            icon: Icons.info_outline_rounded,
+            icon: const Icon(Icons.info_outline_rounded),
             label: 'Show filters',
             onPressed: () => setState(() => _filtersVisible = !_filtersVisible),
           ),

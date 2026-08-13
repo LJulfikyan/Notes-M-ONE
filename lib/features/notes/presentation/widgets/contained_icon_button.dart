@@ -15,7 +15,7 @@ class ContainedIconButton extends StatelessWidget {
     this.borderRadius = const BorderRadius.all(Radius.circular(8)),
   });
 
-  final IconData icon;
+  final Icon icon;
   final String tooltip;
   final VoidCallback? onPressed;
   final Color backgroundColor;
@@ -47,10 +47,12 @@ class ContainedIconButton extends StatelessWidget {
               hoverColor: Colors.transparent,
               focusColor: Colors.transparent,
               child: Center(
-                child: Icon(
-                  icon,
-                  size: iconSize,
-                  color: onPressed == null ? Colors.white38 : foregroundColor,
+                child: IconTheme(
+                  data: IconThemeData(
+                    size: iconSize,
+                    color: onPressed == null ? Colors.white38 : foregroundColor,
+                  ),
+                  child: icon,
                 ),
               ),
             ),

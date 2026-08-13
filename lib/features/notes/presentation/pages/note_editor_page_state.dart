@@ -92,7 +92,7 @@ class NoteEditorPageState extends State<NoteEditorPage>
                       ContainedIconButton(
                         key: const ValueKey('editor-back-control'),
                         tooltip: 'Back',
-                        icon: Icons.chevron_left_rounded,
+                        icon: const Icon(Icons.chevron_left_rounded),
                         onPressed: _initialized ? _handleBack : null,
                         size: 47,
                         iconSize: 25,
@@ -101,9 +101,11 @@ class NoteEditorPageState extends State<NoteEditorPage>
                       ContainedIconButton(
                         key: const ValueKey('editor-state-control'),
                         tooltip: favorite ? 'Favorite note' : 'Preview note',
-                        icon: favorite
-                            ? Icons.star_border_rounded
-                            : Icons.visibility_outlined,
+                        icon: Icon(
+                          favorite
+                              ? Icons.star_border_rounded
+                              : Icons.visibility_outlined,
+                        ),
                         foregroundColor: favorite
                             ? AppColors.favoriteAction
                             : Colors.white,
@@ -115,7 +117,7 @@ class NoteEditorPageState extends State<NoteEditorPage>
                       ContainedIconButton(
                         key: const ValueKey('editor-save-control'),
                         tooltip: 'Save note',
-                        icon: Icons.save_outlined,
+                        icon: const Icon(Icons.save_outlined),
                         onPressed: _initialized ? _save : null,
                         size: 47,
                         iconSize: 21,

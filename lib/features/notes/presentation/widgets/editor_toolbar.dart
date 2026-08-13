@@ -21,13 +21,13 @@ class EditorToolbar extends StatelessWidget {
               _toolbarText('B', FontWeight.w700),
               _toolbarText('I', FontWeight.w400, italic: true),
               _toolbarText('U', FontWeight.w400, underline: true),
-              _toolbarButton(Icons.link_rounded),
-              _toolbarButton(Icons.format_align_left_rounded),
-              _toolbarButton(Icons.format_list_bulleted_rounded),
-              _toolbarButton(Icons.format_list_numbered_rounded),
-              _toolbarButton(Icons.code_rounded),
-              _toolbarButton(Icons.title_rounded),
-              _toolbarButton(Icons.functions_rounded),
+              _toolbarButton(const Icon(Icons.link_rounded)),
+              _toolbarButton(const Icon(Icons.format_align_left_rounded)),
+              _toolbarButton(const Icon(Icons.format_list_bulleted_rounded)),
+              _toolbarButton(const Icon(Icons.format_list_numbered_rounded)),
+              _toolbarButton(const Icon(Icons.code_rounded)),
+              _toolbarButton(const Icon(Icons.title_rounded)),
+              _toolbarButton(const Icon(Icons.functions_rounded)),
             ],
           ),
         ),
@@ -35,7 +35,7 @@ class EditorToolbar extends StatelessWidget {
     );
   }
 
-  Widget _toolbarButton(IconData icon) {
+  Widget _toolbarButton(Icon icon) {
     return Semantics(
       button: true,
       child: GestureDetector(
@@ -44,7 +44,12 @@ class EditorToolbar extends StatelessWidget {
         child: SizedBox(
           width: 34,
           height: 48,
-          child: Center(child: Icon(icon, size: 18, color: Colors.white70)),
+          child: Center(
+            child: IconTheme(
+              data: const IconThemeData(size: 18, color: Colors.white70),
+              child: icon,
+            ),
+          ),
         ),
       ),
     );

@@ -10,7 +10,7 @@ class HeaderButton extends StatelessWidget {
     required this.onPressed,
   });
 
-  final IconData icon;
+  final Icon icon;
   final String label;
   final VoidCallback onPressed;
 
