@@ -61,12 +61,11 @@ void main() {
       renderedIcons.map((icon) => icon.icon),
       containsAll(const <IconData>[
         Icons.link_rounded,
-        Icons.format_align_left_rounded,
-        Icons.format_list_bulleted_rounded,
+        Icons.format_strikethrough,
         Icons.format_list_numbered_rounded,
+        Icons.format_list_bulleted_rounded,
         Icons.code_rounded,
-        Icons.title_rounded,
-        Icons.functions_rounded,
+        Icons.checklist_rounded,
       ]),
     );
     for (final icon in renderedIcons) {

@@ -18,16 +18,26 @@ class EditorToolbar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
-              _toolbarText('B', FontWeight.w700),
-              _toolbarText('I', FontWeight.w400, italic: true),
-              _toolbarText('U', FontWeight.w400, underline: true),
-              _toolbarButton(const Icon(Icons.link_rounded)),
-              _toolbarButton(const Icon(Icons.format_align_left_rounded)),
-              _toolbarButton(const Icon(Icons.format_list_bulleted_rounded)),
-              _toolbarButton(const Icon(Icons.format_list_numbered_rounded)),
-              _toolbarButton(const Icon(Icons.code_rounded)),
-              _toolbarButton(const Icon(Icons.title_rounded)),
-              _toolbarButton(const Icon(Icons.functions_rounded)),
+              _toolbarText('bold', 'B', FontWeight.w700),
+              _toolbarText('italic', 'I', FontWeight.w400, italic: true),
+              _toolbarText('underline', 'U', FontWeight.w400, underline: true),
+              _toolbarButton('link', const Icon(Icons.link_rounded)),
+              _toolbarButton(
+                'strikethrough',
+                const Icon(Icons.format_strikethrough),
+              ),
+              _toolbarButton(
+                'numbered-list',
+                const Icon(Icons.format_list_numbered_rounded),
+              ),
+              _toolbarButton(
+                'bulleted-list',
+                const Icon(Icons.format_list_bulleted_rounded),
+              ),
+              _toolbarButton('code', const Icon(Icons.code_rounded)),
+              _toolbarText('text', 'T', FontWeight.w400),
+              _toolbarText('sigma', 'Σ', FontWeight.w400),
+              _toolbarButton('checklist', const Icon(Icons.checklist_rounded)),
             ],
           ),
         ),
@@ -35,10 +45,12 @@ class EditorToolbar extends StatelessWidget {
     );
   }
 
-  Widget _toolbarButton(Icon icon) {
+  Widget _toolbarButton(String id, Icon icon) {
     return Semantics(
       button: true,
+      label: id,
       child: GestureDetector(
+        key: ValueKey('editor-toolbar-$id'),
         behavior: HitTestBehavior.opaque,
         onTap: () {},
         child: SizedBox(
@@ -56,6 +68,7 @@ class EditorToolbar extends StatelessWidget {
   }
 
   Widget _toolbarText(
+    String id,
     String label,
     FontWeight fontWeight, {
     bool italic = false,
@@ -65,6 +78,7 @@ class EditorToolbar extends StatelessWidget {
       button: true,
       label: label,
       child: GestureDetector(
+        key: ValueKey('editor-toolbar-$id'),
         behavior: HitTestBehavior.opaque,
         onTap: () {},
         child: SizedBox(

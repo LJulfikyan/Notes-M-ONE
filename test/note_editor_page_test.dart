@@ -286,7 +286,65 @@ void main() {
       'Plain text',
     );
     expect((await repository.getDraft('new-note'))?.body, 'Plain text');
-    expect(find.byIcon(Icons.functions_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.checklist_rounded), findsOneWidget);
+    expect(find.text('Σ'), findsOneWidget);
+  });
+
+  testWidgets('formatting toolbar matches the complete Figma control order', (
+    tester,
+  ) async {
+    final store = NotesStore(SwipeTestRepository([]));
+    const controlIds = [
+      'bold',
+      'italic',
+      'underline',
+      'link',
+      'strikethrough',
+      'numbered-list',
+      'bulleted-list',
+      'code',
+      'text',
+      'sigma',
+      'checklist',
+    ];
+
+    await _pumpEditor(
+      tester,
+      store,
+      null,
+      size: const Size(320, 720),
+      viewInsetsBottom: 300,
+    );
+
+    expect(find.byType(EditorToolbar), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(EditorToolbar),
+        matching: find.byType(GestureDetector),
+      ),
+      findsNWidgets(11),
+    );
+    final centers = <double>[];
+    for (final id in controlIds) {
+      final control = find.byKey(ValueKey('editor-toolbar-$id'));
+      expect(control, findsOneWidget);
+      centers.add(tester.getCenter(control).dx);
+    }
+    expect(centers, orderedEquals([...centers]..sort()));
+    expect(find.byIcon(Icons.format_strikethrough), findsOneWidget);
+    expect(find.byIcon(Icons.format_align_left_rounded), findsNothing);
+    expect(find.byIcon(Icons.checklist_rounded), findsOneWidget);
+
+    final toolbarScrollable = find.descendant(
+      of: find.byType(EditorToolbar),
+      matching: find.byType(Scrollable),
+    );
+    final scrollState = tester.state<ScrollableState>(toolbarScrollable);
+    expect(scrollState.position.maxScrollExtent, greaterThan(0));
+    await tester.drag(find.byType(EditorToolbar), const Offset(-100, 0));
+    await tester.pumpAndSettle();
+    expect(scrollState.position.pixels, greaterThan(0));
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('toolbar follows keyboard visibility instead of staying pinned', (
