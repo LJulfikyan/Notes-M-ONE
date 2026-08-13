@@ -38,9 +38,12 @@ Out of scope:
 
 ### File organization rule
 
-Use one class per Dart file.
+Use **one primary implementation concept per file**.
 
-Do not place multiple implementation classes in the same file. Each class should have its own snake_case file matching the class responsibility. Keep enums, extensions, and other reusable declarations separate rather than collecting unrelated declarations into large files.
+A `StatefulWidget` and its private `State` class belong in the same Dart file;
+the private State is part of the widget's implementation, not an independent
+concept. Keep independent reusable widgets, stores, repositories, models,
+services, enums, and extensions in their own snake_case files.
 
 Keep the codebase small:
 

@@ -33,12 +33,14 @@ Local design references are under `.codex_reference/`.
 
 ## Architecture
 
-## File/class rule
+## File organization rule
 
-- Use one class per file.
-- Do not declare multiple implementation classes in the same Dart file.
-- Each class must live in a file named after that class using Dart snake_case naming.
-- Small enums, typedefs, and extensions may have their own files as well; do not bundle unrelated declarations together for convenience.
+Use **one primary implementation concept per file**.
+
+A `StatefulWidget` and its private `State` class belong in the same Dart file.
+The private State is part of the widget's primary implementation concept.
+Keep independent reusable widgets, stores, repositories, models, services,
+enums, and extensions in their own snake_case files.
 
 Use a deliberately small architecture:
 
