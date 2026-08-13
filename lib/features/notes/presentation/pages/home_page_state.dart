@@ -28,9 +28,11 @@ class HomePageState extends State<HomePage> {
         title: const Text('Notes'),
         titleTextStyle: const TextStyle(
           color: Colors.white,
-          fontSize: 40,
-          fontWeight: FontWeight.w500,
+          fontFamily: 'Nunito',
+          fontSize: 43,
+          fontWeight: FontWeight.w600,
           height: 1,
+          letterSpacing: 0,
         ),
         actions: [
           HeaderButton(

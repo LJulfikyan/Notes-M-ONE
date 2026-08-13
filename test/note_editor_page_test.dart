@@ -226,11 +226,27 @@ void main() {
     expect(saveRect.right, 370);
     expect(
       tester.widget<TextField>(find.byType(TextField).first).style?.fontSize,
-      34,
+      48,
     );
     expect(
       tester.widget<TextField>(find.byType(TextField).last).style?.fontSize,
-      18,
+      23,
+    );
+    expect(
+      tester.widget<TextField>(find.byType(TextField).first).style?.fontFamily,
+      'Nunito',
+    );
+    expect(
+      tester.widget<TextField>(find.byType(TextField).last).style?.fontFamily,
+      'Nunito',
+    );
+    expect(
+      tester.widget<TextField>(find.byType(TextField).first).style?.height,
+      1,
+    );
+    expect(
+      tester.widget<TextField>(find.byType(TextField).last).style?.height,
+      1,
     );
     expect(tester.takeException(), isNull);
   });
@@ -250,11 +266,28 @@ void main() {
       tester,
       NotesStore(SwipeTestRepository([note])),
       note,
+      size: const Size(320, 720),
       textScale: 1.5,
     );
 
     expect(find.byKey(const ValueKey('editor-title-field')), findsOneWidget);
     expect(find.byKey(const ValueKey('editor-body-field')), findsOneWidget);
+    expect(
+      tester.getSize(find.byKey(const ValueKey('editor-title-field'))).height,
+      greaterThan(48 * 1.5),
+    );
+    final editorScrollable = find.descendant(
+      of: find.byKey(const ValueKey('editor-scroll-view')),
+      matching: find.byType(Scrollable),
+    );
+    final scrollState = tester.state<ScrollableState>(editorScrollable.first);
+    expect(scrollState.position.maxScrollExtent, greaterThan(0));
+    await tester.drag(
+      find.byKey(const ValueKey('editor-scroll-view')),
+      const Offset(0, -300),
+    );
+    await tester.pumpAndSettle();
+    expect(scrollState.position.pixels, greaterThan(0));
     expect(tester.takeException(), isNull);
   });
 }

@@ -127,6 +127,7 @@ class NoteEditorPageState extends State<NoteEditorPage>
               const SizedBox(height: 32),
               Expanded(
                 child: SingleChildScrollView(
+                  key: const ValueKey('editor-scroll-view'),
                   padding: const EdgeInsets.fromLTRB(23, 0, 23, 32),
                   keyboardDismissBehavior:
                       ScrollViewKeyboardDismissBehavior.onDrag,
@@ -145,8 +146,9 @@ class NoteEditorPageState extends State<NoteEditorPage>
                         scrollPadding: const EdgeInsets.only(bottom: 72),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 34,
-                          height: 1.2,
+                          fontFamily: 'Nunito',
+                          fontSize: 48,
+                          height: 1,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0,
                         ),
@@ -154,8 +156,9 @@ class NoteEditorPageState extends State<NoteEditorPage>
                           hintText: 'Title',
                           hintStyle: TextStyle(
                             color: Colors.white38,
-                            fontSize: 34,
-                            height: 1.2,
+                            fontFamily: 'Nunito',
+                            fontSize: 48,
+                            height: 1,
                             fontWeight: FontWeight.w400,
                             letterSpacing: 0,
                           ),
@@ -173,8 +176,9 @@ class NoteEditorPageState extends State<NoteEditorPage>
                         scrollPadding: const EdgeInsets.only(bottom: 72),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 18,
-                          height: 1.45,
+                          fontFamily: 'Nunito',
+                          fontSize: 23,
+                          height: 1,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0,
                         ),
@@ -182,8 +186,9 @@ class NoteEditorPageState extends State<NoteEditorPage>
                           hintText: 'Type something...',
                           hintStyle: TextStyle(
                             color: Colors.white38,
-                            fontSize: 18,
-                            height: 1.45,
+                            fontFamily: 'Nunito',
+                            fontSize: 23,
+                            height: 1,
                             fontWeight: FontWeight.w400,
                             letterSpacing: 0,
                           ),

@@ -11,6 +11,23 @@ Do not treat these as universal fixed dimensions. They are the calibration
 target at the reference width. Responsive layouts should preserve the visual
 relationships at other widths.
 
+## Verified typography
+
+These values were read directly from Figma and are authoritative. Nunito is
+bundled locally and is the application-wide font family; platform-default fonts
+must not be substituted.
+
+| Element | Weight | Size | Line height | Letter spacing |
+|---|---:|---:|---:|---:|
+| Home `Notes` heading | 600 | 43 | 100% | 0% |
+| Note/card text | 400 | 25 | 100% | 0% |
+| Editor title and title placeholder | 400 | 48 | 100% | 0% |
+| Editor body and body placeholder | 400 | 23 | 100% | 0% |
+| Empty-state caption | 300 | 20 | 100% | 0% |
+
+Other text keeps its existing size and weight while inheriting Nunito. Do not
+invent exact typography values for layers that have not been measured.
+
 ## Global horizontal layout
 
 Primary content/card inset:

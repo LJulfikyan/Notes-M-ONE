@@ -30,8 +30,11 @@ class NoteCard extends StatelessWidget {
                   note.title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: const Color(0xFF252525),
-                    fontSize: 20,
-                    height: 1.25,
+                    fontFamily: 'Nunito',
+                    fontSize: 25,
+                    height: 1,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 0,
                   ),
                 ),
               ),

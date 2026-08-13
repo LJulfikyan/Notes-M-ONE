@@ -6,6 +6,7 @@ abstract final class AppTheme {
   static final dark = ThemeData(
     brightness: Brightness.dark,
     useMaterial3: false,
+    fontFamily: 'Nunito',
     scaffoldBackgroundColor: AppColors.background,
     colorScheme: const ColorScheme.dark(
       surface: AppColors.darkSurface,

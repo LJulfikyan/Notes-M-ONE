@@ -61,6 +61,13 @@ void main() {
     await tester.pumpWidget(_home([], 1));
     await tester.pumpAndSettle();
 
+    expect(
+      Theme.of(
+        tester.element(find.byType(HomePage)),
+      ).textTheme.bodyMedium?.fontFamily,
+      'Nunito',
+    );
+
     final illustrationRect = tester.getRect(
       find.byKey(const ValueKey('empty-notes-illustration')),
     );
@@ -70,6 +77,12 @@ void main() {
     expect(illustrationRect.top, closeTo(279, 1));
     final captionRect = tester.getRect(find.text('Create your first note !'));
     expect(captionRect.top - illustrationRect.bottom, closeTo(19, 1));
+    final caption = tester.widget<Text>(find.text('Create your first note !'));
+    expect(caption.style?.fontFamily, 'Nunito');
+    expect(caption.style?.fontSize, 20);
+    expect(caption.style?.fontWeight, FontWeight.w300);
+    expect(captionRect.left, greaterThanOrEqualTo(0));
+    expect(captionRect.right, lessThanOrEqualTo(393));
     expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(
@@ -91,14 +104,20 @@ void main() {
     expect(infoRect.left - searchRect.right, 19);
 
     final appBar = tester.widget<AppBar>(find.byType(AppBar));
-    expect(appBar.titleTextStyle?.fontSize, 40);
+    expect(appBar.titleTextStyle?.fontFamily, 'Nunito');
+    expect(appBar.titleTextStyle?.fontSize, 43);
+    expect(appBar.titleTextStyle?.fontWeight, FontWeight.w600);
+    expect(tester.getRect(find.text('Notes')).right, lessThan(searchRect.left));
 
     final noteRect = tester.getRect(find.byType(NoteCard));
     expect(noteRect.left, 23);
     expect(noteRect.width, 348);
     expect(noteRect.height, closeTo(106, 1.5));
     final noteText = tester.widget<Text>(find.text('Short'));
-    expect(noteText.style?.fontSize, 20);
+    expect(noteText.style?.fontFamily, 'Nunito');
+    expect(noteText.style?.fontSize, 25);
+    expect(noteText.style?.fontWeight, FontWeight.w400);
+    expect(noteText.style?.height, 1);
     expect(
       tester.getSize(find.byType(FloatingActionButton)),
       const Size.square(66),

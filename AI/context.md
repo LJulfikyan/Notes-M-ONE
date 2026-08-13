@@ -127,6 +127,14 @@ Known verified colors from the rendered Figma data:
 - common dark surface `#454545`
 - another common control surface `#3B3B3B`
 
+## Typography
+
+Nunito is bundled locally as the application-wide font; do not use
+platform-default fonts. The bundled variable font supplies the verified 300,
+400 and 600 weights. Exact known Figma styles are documented in
+`docs/REFERENCE_GEOMETRY.md`; retain existing sizes and weights for typography
+that has not been measured directly.
+
 ## Design traps
 
 1. Brief requires plain text, but Figma visually italicizes a paragraph.

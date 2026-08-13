@@ -30,12 +30,17 @@ class EmptyNotesView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 19),
-                Text(
+                const Text(
                   'Create your first note !',
                   textAlign: TextAlign.center,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontFamily: 'Nunito',
+                    fontSize: 20,
+                    height: 1,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),

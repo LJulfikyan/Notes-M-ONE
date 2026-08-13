@@ -118,4 +118,8 @@ The challenge explicitly prioritizes structure, spacing rhythm and correct state
 
 ## Typography
 
-The exact Figma font metadata has **not** been decoded from `canvas.fig`. Do not claim a font family/weight/size is exact based on this pack alone. Match visually using the rendered references and keep text responsive.
+Representative Home, card, Editor, and empty-state layers were subsequently
+verified directly in Figma as Nunito. The exact measured styles are recorded in
+`docs/REFERENCE_GEOMETRY.md`. Other typography retains its established
+size/weight and inherits Nunito; do not invent exact values for unmeasured
+layers.
