@@ -108,7 +108,7 @@ void main() {
     );
   });
 
-  testWidgets('repeated Edit and Preview switches do not add routes', (
+  testWidgets('repeated Edit and Preview switches keep header and route', (
     tester,
   ) async {
     final note = _note();
@@ -121,12 +121,40 @@ void main() {
       navigatorObservers: [observer],
     );
     expect(observer.pushCount, 1);
+    final editBackRect = tester.getRect(
+      find.byKey(const ValueKey('editor-back-control')),
+    );
+    final saveRect = tester.getRect(
+      find.byKey(const ValueKey('editor-save-control')),
+    );
 
     for (var index = 0; index < 4; index += 1) {
       await tester.tap(find.byTooltip('Preview note'));
       await tester.pumpAndSettle();
+
+      expect(
+        tester.getRect(find.byKey(const ValueKey('editor-back-control'))),
+        editBackRect,
+      );
+      expect(
+        tester.getRect(
+          find.byKey(const ValueKey('editor-preview-edit-control')),
+        ),
+        saveRect,
+      );
+      expect(observer.pushCount, 1);
+
       await tester.tap(find.byTooltip('Edit note'));
       await tester.pumpAndSettle();
+
+      expect(
+        tester.getRect(find.byKey(const ValueKey('editor-back-control'))),
+        editBackRect,
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('editor-save-control'))),
+        saveRect,
+      );
     }
 
     expect(observer.pushCount, 1);

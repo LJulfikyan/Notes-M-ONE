@@ -87,17 +87,8 @@ class _NoteEditorPageState extends State<NoteEditorPage>
     final toolbarVisible =
         keyboardVisible &&
         (_titleFocusNode.hasFocus || _bodyFocusNode.hasFocus);
-    if (isPreview) {
-      return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, _) {
-          if (!didPop) _handleBack();
-        },
-        child: _buildPreview(),
-      );
-    }
     return PopScope(
-      canPop: !_isDirty || _isSaved,
+      canPop: !isPreview && (!_isDirty || _isSaved),
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _handleBack();
       },
@@ -105,124 +96,12 @@ class _NoteEditorPageState extends State<NoteEditorPage>
         body: SafeArea(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 23),
-                child: SizedBox(
-                  height: 47,
-                  child: Row(
-                    children: [
-                      ContainedIconButton(
-                        key: const ValueKey('editor-back-control'),
-                        tooltip: 'Back',
-                        icon: const Icon(Icons.chevron_left_rounded),
-                        onPressed: _initialized ? _handleBack : null,
-                        size: 47,
-                        iconSize: 25,
-                      ),
-                      const Spacer(),
-                      ContainedIconButton(
-                        key: const ValueKey('editor-state-control'),
-                        tooltip: favorite ? 'Favorite note' : 'Preview note',
-                        icon: Icon(
-                          favorite
-                              ? Icons.star_border_rounded
-                              : Icons.visibility_outlined,
-                        ),
-                        foregroundColor: favorite
-                            ? AppColors.favoriteAction
-                            : Colors.white,
-                        onPressed: _initialized ? _preview : null,
-                        size: 47,
-                        iconSize: 21,
-                      ),
-                      const SizedBox(width: 19),
-                      ContainedIconButton(
-                        key: const ValueKey('editor-save-control'),
-                        tooltip: 'Save note',
-                        icon: const Icon(Icons.save_outlined),
-                        onPressed: _initialized ? _save : null,
-                        size: 47,
-                        iconSize: 21,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _buildHeader(favorite: favorite, isPreview: isPreview),
               const SizedBox(height: 32),
               Expanded(
-                child: SingleChildScrollView(
-                  key: const ValueKey('editor-scroll-view'),
-                  padding: const EdgeInsets.fromLTRB(23, 0, 23, 32),
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      TextField(
-                        key: const ValueKey('editor-title-field'),
-                        controller: _titleController,
-                        focusNode: _titleFocusNode,
-                        autofocus: widget.note == null,
-                        enabled: _initialized,
-                        minLines: 1,
-                        maxLines: null,
-                        textCapitalization: TextCapitalization.sentences,
-                        scrollPadding: const EdgeInsets.only(bottom: 72),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Nunito',
-                          fontSize: 48,
-                          height: 1,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 0,
-                        ),
-                        decoration: const InputDecoration.collapsed(
-                          hintText: 'Title',
-                          hintStyle: TextStyle(
-                            color: Colors.white38,
-                            fontFamily: 'Nunito',
-                            fontSize: 48,
-                            height: 1,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 0,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        key: const ValueKey('editor-body-field'),
-                        controller: _bodyController,
-                        focusNode: _bodyFocusNode,
-                        enabled: _initialized,
-                        minLines: 1,
-                        maxLines: null,
-                        textCapitalization: TextCapitalization.sentences,
-                        scrollPadding: const EdgeInsets.only(bottom: 72),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Nunito',
-                          fontSize: 23,
-                          height: 1,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 0,
-                        ),
-                        decoration: const InputDecoration.collapsed(
-                          hintText: 'Type something...',
-                          hintStyle: TextStyle(
-                            color: Colors.white38,
-                            fontFamily: 'Nunito',
-                            fontSize: 23,
-                            height: 1,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: isPreview ? _buildPreviewContent() : _buildEditContent(),
               ),
-              if (toolbarVisible) const EditorToolbar(),
+              if (!isPreview && toolbarVisible) const EditorToolbar(),
             ],
           ),
         ),
@@ -230,76 +109,167 @@ class _NoteEditorPageState extends State<NoteEditorPage>
     );
   }
 
-  Widget _buildPreview() {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
+  Widget _buildHeader({required bool favorite, required bool isPreview}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 23),
+      child: SizedBox(
+        height: 47,
+        child: Row(
           children: [
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 23),
-              child: SizedBox(
-                height: 47,
-                child: Row(
-                  children: [
-                    ContainedIconButton(
-                      key: const ValueKey('editor-preview-back-control'),
-                      tooltip: 'Back',
-                      icon: const Icon(Icons.chevron_left_rounded),
-                      onPressed: _showEdit,
-                      size: 47,
-                      iconSize: 25,
-                    ),
-                    const Spacer(),
-                    ContainedIconButton(
-                      key: const ValueKey('editor-preview-edit-control'),
-                      tooltip: 'Edit note',
-                      icon: const Icon(Icons.edit_rounded),
-                      onPressed: _showEdit,
-                      size: 47,
-                      iconSize: 21,
-                    ),
-                  ],
-                ),
-              ),
+            ContainedIconButton(
+              key: const ValueKey('editor-back-control'),
+              tooltip: 'Back',
+              icon: const Icon(Icons.chevron_left_rounded),
+              onPressed: _initialized ? _handleBack : null,
+              size: 47,
+              iconSize: 25,
             ),
-            const SizedBox(height: 32),
-            Expanded(
-              child: SingleChildScrollView(
-                key: const ValueKey('editor-preview-scroll-view'),
-                padding: const EdgeInsets.fromLTRB(23, 0, 23, 32),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _titleController.text,
-                      key: const ValueKey('editor-preview-title'),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 34,
-                        height: 1.25,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: 0,
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-                    Text(
-                      _bodyController.text,
-                      key: const ValueKey('editor-preview-body'),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        height: 1.5,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: 0,
-                      ),
-                    ),
-                  ],
+            const Spacer(),
+            if (isPreview)
+              ContainedIconButton(
+                key: const ValueKey('editor-preview-edit-control'),
+                tooltip: 'Edit note',
+                icon: const Icon(Icons.edit_rounded),
+                onPressed: _showEdit,
+                size: 47,
+                iconSize: 21,
+              )
+            else ...[
+              ContainedIconButton(
+                key: const ValueKey('editor-state-control'),
+                tooltip: favorite ? 'Favorite note' : 'Preview note',
+                icon: Icon(
+                  favorite
+                      ? Icons.star_border_rounded
+                      : Icons.visibility_outlined,
                 ),
+                foregroundColor: favorite
+                    ? AppColors.favoriteAction
+                    : Colors.white,
+                onPressed: _initialized ? _preview : null,
+                size: 47,
+                iconSize: 21,
               ),
-            ),
+              const SizedBox(width: 19),
+              ContainedIconButton(
+                key: const ValueKey('editor-save-control'),
+                tooltip: 'Save note',
+                icon: const Icon(Icons.save_outlined),
+                onPressed: _initialized ? _save : null,
+                size: 47,
+                iconSize: 21,
+              ),
+            ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildEditContent() {
+    return SingleChildScrollView(
+      key: const ValueKey('editor-scroll-view'),
+      padding: const EdgeInsets.fromLTRB(23, 0, 23, 32),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextField(
+            key: const ValueKey('editor-title-field'),
+            controller: _titleController,
+            focusNode: _titleFocusNode,
+            autofocus: widget.note == null,
+            enabled: _initialized,
+            minLines: 1,
+            maxLines: null,
+            textCapitalization: TextCapitalization.sentences,
+            scrollPadding: const EdgeInsets.only(bottom: 72),
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'Nunito',
+              fontSize: 48,
+              height: 1,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0,
+            ),
+            decoration: const InputDecoration.collapsed(
+              hintText: 'Title',
+              hintStyle: TextStyle(
+                color: Colors.white38,
+                fontFamily: 'Nunito',
+                fontSize: 48,
+                height: 1,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 0,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            key: const ValueKey('editor-body-field'),
+            controller: _bodyController,
+            focusNode: _bodyFocusNode,
+            enabled: _initialized,
+            minLines: 1,
+            maxLines: null,
+            textCapitalization: TextCapitalization.sentences,
+            scrollPadding: const EdgeInsets.only(bottom: 72),
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'Nunito',
+              fontSize: 23,
+              height: 1,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0,
+            ),
+            decoration: const InputDecoration.collapsed(
+              hintText: 'Type something...',
+              hintStyle: TextStyle(
+                color: Colors.white38,
+                fontFamily: 'Nunito',
+                fontSize: 23,
+                height: 1,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 0,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreviewContent() {
+    return SingleChildScrollView(
+      key: const ValueKey('editor-preview-scroll-view'),
+      padding: const EdgeInsets.fromLTRB(23, 0, 23, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _titleController.text,
+            key: const ValueKey('editor-preview-title'),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 34,
+              height: 1.25,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0,
+            ),
+          ),
+          const SizedBox(height: 28),
+          Text(
+            _bodyController.text,
+            key: const ValueKey('editor-preview-body'),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              height: 1.5,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0,
+            ),
+          ),
+        ],
       ),
     );
   }
